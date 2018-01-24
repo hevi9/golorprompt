@@ -1,3 +1,7 @@
+golorprompt -- go prompt
+
+
+
 ## ifile - Show sign if file exists in CWD
 
 ```

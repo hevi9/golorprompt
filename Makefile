@@ -20,7 +20,12 @@ get::
 
 build:: $(prg)
 
+version = $(shell git describe)
 
+dist:: build
+	mkdir -p dist/golorprompt-$(version)
+	cp $(prg) dist/golorprompt-$(version)
+	cd dist && zip -r golorprompt-$(version).zip golorprompt-$(version)
 
 $(prg):: $(srcs)
 	go build -i -o $(prg) -ldflags="-s -w" .

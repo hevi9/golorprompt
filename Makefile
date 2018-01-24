@@ -20,6 +20,8 @@ get::
 
 build:: $(prg)
 
+
+
 $(prg):: $(srcs)
 	go build -i -o $(prg) -ldflags="-s -w" .
 

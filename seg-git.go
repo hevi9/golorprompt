@@ -1,4 +1,4 @@
-# TODO: mv file1 file2 does not show indicators, no wt delete, no wt new file
+// TODO: mv file1 file2 does not show indicators, no wt delete, no wt new file
 
 package main
 

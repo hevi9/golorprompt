@@ -3,11 +3,12 @@
 package main
 
 import (
-	"gopkg.in/libgit2/git2go.v24"
-	"github.com/lucasb-eyer/go-colorful"
-	"os"
-	"log"
 	"fmt"
+	"log"
+	"os"
+
+	"github.com/lucasb-eyer/go-colorful"
+	"gopkg.in/libgit2/git2go.v24"
 )
 
 func init() {
@@ -24,7 +25,7 @@ func init() {
 // 0 - OK
 
 const (
-	ColorLevelOk      = iota
+	ColorLevelOk = iota
 	ColorLevelIgnored
 	ColorLevelCurrent
 
@@ -39,7 +40,7 @@ const (
 	ColorLevelWtModified
 	ColorLevelWtTypeChange
 
-	ColorLevelWtNew  // Untracked
+	ColorLevelWtNew // Untracked
 
 	ColorLevelConflicted
 )
@@ -79,7 +80,7 @@ type GitRepoStatus struct {
 	WtTypeChange    int
 	Ignored         int
 	Conflicted      int
-	Total		int
+	Total           int
 }
 
 func getRepoStatus(repo *git.Repository) (*GitRepoStatus, error) {
@@ -109,53 +110,53 @@ func getRepoStatus(repo *git.Repository) (*GitRepoStatus, error) {
 			if err != nil {
 				log.Panicf("may not go out of index: statusList.ByIndex(%d): %s", i, err)
 			}
-			if ( git.StatusCurrent & entry.Status ) != 0 {
+			if (git.StatusCurrent & entry.Status) != 0 {
 				value.Current += 1
 			}
-			if ( git.StatusIndexNew & entry.Status ) != 0 {
+			if (git.StatusIndexNew & entry.Status) != 0 {
 				value.IndexNew += 1
 				value.Total += 1
 			}
-			if ( git.StatusIndexModified & entry.Status ) != 0 {
+			if (git.StatusIndexModified & entry.Status) != 0 {
 				value.IndexModified += 1
 				value.Total += 1
 			}
-			if ( git.StatusIndexDeleted & entry.Status ) != 0 {
+			if (git.StatusIndexDeleted & entry.Status) != 0 {
 				value.IndexDeleted += 1
 				value.Total += 1
 			}
-			if ( git.StatusIndexRenamed & entry.Status ) != 0 {
+			if (git.StatusIndexRenamed & entry.Status) != 0 {
 				value.IndexRenamed += 1
 				value.Total += 1
 			}
-			if ( git.StatusIndexTypeChange & entry.Status ) != 0 {
+			if (git.StatusIndexTypeChange & entry.Status) != 0 {
 				value.IndexTypeChange += 1
 				value.Total += 1
 			}
-			if ( git.StatusWtNew & entry.Status ) != 0 {
+			if (git.StatusWtNew & entry.Status) != 0 {
 				value.WtNew += 1
 				value.Total += 1
 			}
-			if ( git.StatusWtModified & entry.Status ) != 0 {
+			if (git.StatusWtModified & entry.Status) != 0 {
 				value.WtModified += 1
 				value.Total += 1
 			}
-			if ( git.StatusWtDeleted & entry.Status ) != 0 {
+			if (git.StatusWtDeleted & entry.Status) != 0 {
 				value.WtDeleted += 1
 				value.Total += 1
 			}
-			if ( git.StatusWtTypeChange & entry.Status ) != 0 {
+			if (git.StatusWtTypeChange & entry.Status) != 0 {
 				value.WtTypeChange += 1
 				value.Total += 1
 			}
-			if ( git.StatusWtRenamed & entry.Status ) != 0 {
+			if (git.StatusWtRenamed & entry.Status) != 0 {
 				value.WtRenamed += 1
 				value.Total += 1
 			}
-			if ( git.StatusIgnored & entry.Status ) != 0 {
+			if (git.StatusIgnored & entry.Status) != 0 {
 				value.Ignored += 1
 			}
-			if ( git.StatusConflicted & entry.Status ) != 0 {
+			if (git.StatusConflicted & entry.Status) != 0 {
 				value.Conflicted += 1
 				value.Total += 1
 			}
@@ -189,16 +190,15 @@ func (*Git) Render() []Chunk {
 	if err != nil {
 		log.Printf("Cannot get detached info: %s", err)
 		return nil
-	} else {
-		if detached {
-			return []Chunk{Chunk{text: "-detached-", fg: colorful.HappyColor()}}
-		}
+	}
+	if detached {
+		return []Chunk{Chunk{text: "-detached-", fg: colorful.HappyColor()}}
 	}
 
 	chunks := make([]Chunk, 0)
 
 	// Show head branch
-	var headBranch *git.Branch = nil
+	var headBranch *git.Branch
 	var headBranchName string
 	headRef, err := repo.Head()
 	if err != nil {
@@ -219,7 +219,7 @@ func (*Git) Render() []Chunk {
 	status, err := getRepoStatus(repo)
 	// TODO: handle git status err
 	if status.Total > 0 {
-		chunks = append(chunks, Chunk{text:" "})
+		chunks = append(chunks, Chunk{text: " "})
 	}
 
 	if status.Current > 0 {
@@ -315,7 +315,7 @@ func (*Git) Render() []Chunk {
 		//log.Printf("headBranch.Upstream(): %s", err)
 		chunks = append(chunks, Chunk{
 			text: " noup",
-			fg: config.FgWarning,
+			fg:   config.FgWarning,
 		})
 	} else {
 		ahead, behind, err := repo.AheadBehind(headRef.Target(), upstreamRef.Target())

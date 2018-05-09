@@ -8,7 +8,7 @@ import (
 	"os"
 
 	"github.com/lucasb-eyer/go-colorful"
-	"gopkg.in/libgit2/git2go.v24"
+	"gopkg.in/libgit2/git2go.v26"
 )
 
 func init() {

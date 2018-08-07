@@ -1,9 +1,11 @@
 packages = \
-  gopkg.in/libgit2/git2go.v26 \
+  gopkg.in/libgit2/git2go.v24 \
   github.com/shirou/gopsutil \
   github.com/lucasb-eyer/go-colorful \
   golang.org/x/sys/unix \
-  gopkg.in/alecthomas/kingpin.v2
+  gopkg.in/alecthomas/kingpin.v2 \
+  golang.org/x/crypto/ssh/terminal \
+  golang.org/x/text/width
 
 prg = $(PWD)/golorprompt
 

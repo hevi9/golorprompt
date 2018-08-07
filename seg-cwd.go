@@ -1,11 +1,12 @@
 package main
 
 import (
+	"log"
 	"os"
 	"strings"
+
 	"github.com/lucasb-eyer/go-colorful"
 	"golang.org/x/sys/unix"
-	"log"
 )
 
 func init() {
@@ -29,10 +30,10 @@ func (*Cwd) Render() []Chunk {
 	path := ""
 	for i := range parts {
 		if len(parts[i]) > 0 {
-			hue := 300.0*hashToFloat64([]byte(parts[i])) + 30.0
+			hue := 330.0*hashToFloat64([]byte(parts[i])) + 15.0
 			chunks = append(chunks, Chunk{
 				text: parts[i],
-				fg: colorful.Hsv(hue, config.FgSaturationLow, config.FgValue),
+				fg:   colorful.Hsv(hue, config.FgSaturationLow, config.FgValue),
 			})
 		}
 		hue := 0.0
@@ -43,7 +44,7 @@ func (*Cwd) Render() []Chunk {
 		}
 		chunks = append(chunks, Chunk{
 			text: string(os.PathSeparator),
-			fg: colorful.Hsv(hue, config.FgSaturation, config.FgValue),
+			fg:   colorful.Hsv(hue, config.FgSaturation, config.FgValue),
 		})
 
 	}

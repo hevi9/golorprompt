@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/lucasb-eyer/go-colorful"
 	"encoding/json"
+
+	"github.com/lucasb-eyer/go-colorful"
 )
 
 type Config struct {
@@ -50,8 +51,11 @@ var defaultJson = `
     {"seg": "cwd"},
     {"seg": "git"},
     {"seg": "envvar",
-     "envvar": "VIRTUAL_ENV",
+	 "envvar": "VIRTUAL_ENV",
      "show": "basename"},
+    {"seg": "envvar",
+	 "envvar": "PIPENV_ACTIVE",
+     "sign": "pe"},
     {"seg": "ifile",
      "filename": "Makefile",
      "sign": "M",
@@ -147,38 +151,38 @@ var sign1 = Signs{
 	dot:       "●", // 1 char
 	dots:      "⛬", // 1char
 	star:      "*",
-	flag:      "⚑",  // 1 char
-	skull:     "!",  // TODO: change to error
-	jobs:      "⚙",  // 1 char
-	level:     "⮇",  // 1 char but bad
-	disk:      "o",  // 1 char
+	flag:      "⚑", // 1 char
+	skull:     "!", // TODO: change to error
+	jobs:      "⚙", // 1 char
+	level:     "⮇", // 1 char but bad
+	disk:      "o", // 1 char
 	memory:    "🖫", // 2 char
 	untracked: "?",
-	ahead:     "⭱",  // 1 char
-	behind:    "⭳",  // 1 char
-	diverged:  "⭿",  // 1 char
-	differ:    "⭾",  // 1 char
-	stashes:   "≡",  // 1 char
-	start:     "▶",  // 1 char
+	ahead:     "⭱", // 1 char
+	behind:    "⭳", // 1 char
+	diverged:  "⭿", // 1 char
+	differ:    "⭾", // 1 char
+	stashes:   "≡", // 1 char
+	start:     "▶", // 1 char
 	file:      "🗎", // 2 char
 	dir:       "📁", // 2 char
 	todo:      "🔨", // 2 char
-	action:    "↯",  // 1 char
-	location:  "⌘",  // 1char
+	action:    "↯", // 1 char
+	location:  "⌘", // 1char
 	check:     "🗹", // 2 char
 }
 
 var sign2 = Signs{
-	cont:      "…",  // 1 char
-	plus:      "✚",  // 1 char, bad
-	cross:     "✖",  // 1 char, bad
-	dot:       "●",  // 1 char
-	dots:      "⛬",  // 1char
+	cont:      "…", // 1 char
+	plus:      "✚", // 1 char, bad
+	cross:     "✖", // 1 char, bad
+	dot:       "●", // 1 char
+	dots:      "⛬", // 1char
 	star:      "🟉", // 2 char
-	flag:      "⚑",  // 1 char
+	flag:      "⚑", // 1 char
 	skull:     "🕱", // 2 char
-	jobs:      "⚙",  // 1 char
-	level:     "⮇",  // 1 char but bad
+	jobs:      "⚙", // 1 char
+	level:     "⮇", // 1 char but bad
 	disk:      "🖸", // 2 char
 	memory:    "🖫", // 2 char
 	untracked: "?",
@@ -192,8 +196,8 @@ var sign2 = Signs{
 	file:     "🗎", // 2 char
 	dir:      "📁", // 2 char
 	todo:     "🔨", // 2 char
-	action:   "↯",  // 1 char
-	location: "⌘",  // 1char
+	action:   "↯", // 1 char
+	location: "⌘", // 1char
 	check:    "🗹", // 2 char
 }
 
@@ -230,30 +234,30 @@ var sign3 = Signs{
 var sign = sign3
 
 var mark1 = Marks{
-	cont:      '…',  // 1 char
-	plus:      '✚',  // 1 char, bad
-	cross:     '✖',  // 1 char, bad
-	dot:       '●',  // 1 char
-	dots:      '⛬',  // 1char
+	cont:      '…', // 1 char
+	plus:      '✚', // 1 char, bad
+	cross:     '✖', // 1 char, bad
+	dot:       '●', // 1 char
+	dots:      '⛬', // 1char
 	star:      '🟉', // 2 char
-	flag:      '⚑',  // 1 char
+	flag:      '⚑', // 1 char
 	skull:     '🕱', // 2 char
-	jobs:      '⚙',  // 1 char
-	level:     '⮇',  // 1 char but bad
+	jobs:      '⚙', // 1 char
+	level:     '⮇', // 1 char but bad
 	disk:      '🖸', // 2 char
 	memory:    '🖫', // 2 char
 	untracked: '?',
-	ahead:     '⭱',  // 1 char
-	behind:    '⭳',  // 1 char
-	diverged:  '⭿',  // 1 char
-	differ:    '⭾',  // 1 char
-	stashes:   '≡',  // 1 char
-	start:     '▶',  // 1 char
+	ahead:     '⭱', // 1 char
+	behind:    '⭳', // 1 char
+	diverged:  '⭿', // 1 char
+	differ:    '⭾', // 1 char
+	stashes:   '≡', // 1 char
+	start:     '▶', // 1 char
 	file:      '🗎', // 2 char
 	dir:       '📁', // 2 char
 	todo:      '🔨', // 2 char
-	action:    '↯',  // 1 char
-	location:  '⌘',  // 1char
+	action:    '↯', // 1 char
+	location:  '⌘', // 1char
 	check:     '🗹', // 2 char
 }
 

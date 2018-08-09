@@ -1,8 +1,9 @@
-package main
+package sys
 
 import (
-	"github.com/lucasb-eyer/go-colorful"
 	"unicode/utf8"
+
+	"github.com/lucasb-eyer/go-colorful"
 )
 
 type Chunk struct {
@@ -17,4 +18,3 @@ func (c *Chunk) Len() int {
 type Segment interface {
 	Render() []Chunk
 }
-

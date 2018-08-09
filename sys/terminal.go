@@ -1,13 +1,15 @@
-package main
+package sys
 
 import (
-	"golang.org/x/crypto/ssh/terminal"
+	"fmt"
 	"os"
 	"strconv"
-	"fmt"
+
 	"github.com/lucasb-eyer/go-colorful"
+	"golang.org/x/crypto/ssh/terminal"
 )
 
+// GetWidth Get terminal width
 func GetWidth() int {
 	if width, _, err := terminal.GetSize(int(os.Stdin.Fd())); err == nil {
 		return width
@@ -22,18 +24,21 @@ func GetWidth() int {
 	}
 }
 
-func fg(color colorful.Color) string {
+// Fg Foreground color
+func Fg(color colorful.Color) string {
 	r, g, b := color.RGB255()
 	return fmt.Sprintf("%s\x1b[38;2;%d;%d;%dm%s",
-		config.NpcStart, r, g, b, config.NpcEnd)
+		Config.NpcStart, r, g, b, Config.NpcEnd)
 }
 
-func bg(color colorful.Color) string {
+// Bg Background color
+func Bg(color colorful.Color) string {
 	r, g, b := color.RGB255()
 	return fmt.Sprintf("%s\x1b[48;2;%d;%d;%dm%s",
-		config.NpcStart, r, g, b, config.NpcEnd)
+		Config.NpcStart, r, g, b, Config.NpcEnd)
 }
 
-func rz() string {
-	return fmt.Sprintf("%s\x1b[0m%s", config.NpcStart, config.NpcEnd)
+// Rz Reset color/style
+func Rz() string {
+	return fmt.Sprintf("%s\x1b[0m%s", Config.NpcStart, Config.NpcEnd)
 }

@@ -1,4 +1,4 @@
-package main
+package sys
 
 import (
 	"log"
@@ -111,6 +111,6 @@ func (s *fillerWidget) Len() int {
 func (s *fillerWidget) Chunks() []Chunk {
 
 	return []Chunk{
-		Chunk{text: strings.Repeat(" ", maxInt(s.length, 1))},
+		Chunk{text: strings.Repeat(" ", MaxInt(s.length, 1))},
 	}
 }

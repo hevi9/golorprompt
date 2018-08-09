@@ -1,4 +1,4 @@
-package main
+package sys
 
 import (
 	"encoding/json"
@@ -6,7 +6,8 @@ import (
 	"github.com/lucasb-eyer/go-colorful"
 )
 
-type Config struct {
+// Config golorprompt runtime configuration
+var Config = struct {
 	NpcStart        string         // Non-Printing Character sequence start
 	NpcEnd          string         // Non-Printing Character sequence end
 	BgLine          colorful.Color // Line background color
@@ -18,9 +19,7 @@ type Config struct {
 	FgError         colorful.Color
 	FgInfo          colorful.Color    // Default color to use informational info
 	Args            map[string]string // Cmd line arg map
-}
-
-var config = Config{
+}{
 	NpcStart:        "",
 	NpcEnd:          "",
 	BgLine:          colorful.Hsv(45.0, 0.0, 0.25),

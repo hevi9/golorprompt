@@ -1,11 +1,13 @@
 packages = \
-  gopkg.in/libgit2/git2go.v24 \
   github.com/shirou/gopsutil \
   github.com/lucasb-eyer/go-colorful \
   golang.org/x/sys/unix \
   gopkg.in/alecthomas/kingpin.v2 \
   golang.org/x/crypto/ssh/terminal \
-  golang.org/x/text/width
+  golang.org/x/text/width \
+  github.com/rs/zerolog/log
+
+# gopkg.in/libgit2/git2go.v24 \
 
 prg = $(PWD)/golorprompt
 
@@ -15,12 +17,15 @@ dir = samples
 
 srcs := $(wildcard *.go)
 
+help:
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
+
 all:: build
 
-get::
-	go get -u $(packages)
+get:: ## Get used go packages
+	go get -v $(packages)
 
-build:: $(prg)
+build:: $(prg) ## Compile program and plugins
 
 version = $(shell git describe)
 
@@ -30,12 +35,13 @@ dist:: build
 	cd dist && zip -r golorprompt-$(version).zip golorprompt-$(version)
 
 $(prg):: $(srcs)
-	go build -i -o $(prg) -ldflags="-s -w" .
+	go build -i -o $(prg) -ldflags="-s -w" ./cmd/golorprompt
 
 $(local-prg):: $(srcs)
 	go build -i -o $@ -ldflags="-s -w" .
 
-clean::
+clean:: ## Clean compiles or temporary files
+	rm -f $(prg)
 	rm -rf $(dir)
 
 local-install: $(local-prg)

@@ -1,7 +1,6 @@
 package sys
 
 import (
-	"log"
 	"strings"
 )
 
@@ -21,32 +20,32 @@ func widgetsLen(widgets []Widget) int {
 
 //////////////////////////////////////////////////////////////////////////////
 
-func SegmentWidget(segment Segment) Widget {
-	return &segmentWidget{segment: segment}
-}
+// func SegmentWidget(segment Segment) Widget {
+// 	return &segmentWidget{segment: segment}
+// }
 
 type segmentWidget struct {
 	segment Segment
 	chunks  []Chunk
 }
 
-func (self *segmentWidget) Allocate(maxLen int) {
-	chunks := self.segment.Render()
-	length := 0
-	j := 0
-	for i := len(chunks) - 1; i >= 0; i -= 1 {
-		length += chunks[i].Len()
-		if length > maxLen {
-			break
-		}
-		j = i
-	}
-	self.chunks = chunks[j:]
-	if self.Len() > maxLen {
-		log.Printf("segmentWidget: Allocate: maxLen=%d w.Len()=%d chunks=%v\n",
-			maxLen, self.Len(), self.chunks)
-	}
-}
+// func (self *segmentWidget) Allocate(maxLen int) {
+// 	chunks := self.segment.Render()
+// 	length := 0
+// 	j := 0
+// 	for i := len(chunks) - 1; i >= 0; i -= 1 {
+// 		length += chunks[i].Len()
+// 		if length > maxLen {
+// 			break
+// 		}
+// 		j = i
+// 	}
+// 	self.chunks = chunks[j:]
+// 	if self.Len() > maxLen {
+// 		log.Printf("segmentWidget: Allocate: maxLen=%d w.Len()=%d chunks=%v\n",
+// 			maxLen, self.Len(), self.chunks)
+// 	}
+// }
 
 func (self *segmentWidget) Len() int {
 	length := 0
@@ -83,7 +82,7 @@ func (self *spaceWidget) Len() int {
 
 func (self *spaceWidget) Chunks() []Chunk {
 	if self.len != 0 {
-		return []Chunk{{text: " "}}
+		return []Chunk{{Text: " "}}
 	} else {
 		return nil
 	}
@@ -111,6 +110,6 @@ func (s *fillerWidget) Len() int {
 func (s *fillerWidget) Chunks() []Chunk {
 
 	return []Chunk{
-		Chunk{text: strings.Repeat(" ", MaxInt(s.length, 1))},
+		Chunk{Text: strings.Repeat(" ", MaxInt(s.length, 1))},
 	}
 }

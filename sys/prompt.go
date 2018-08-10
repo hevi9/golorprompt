@@ -2,8 +2,94 @@
 
 package sys
 
-func CommandPrompt() {
+import (
+	"encoding/json"
+	"fmt"
+	"os"
+	"path"
+	"plugin"
 
+	"github.com/rs/zerolog/log"
+)
+
+type widgetS struct {
+	segment Segment
+	chunks  []Chunk
+}
+
+type appS struct {
+	pluginPaths []string
+	errors      int
+}
+
+func (a *appS) resolvePluginPath(name string) (string, error) {
+	suffixes := []string{".so", ""}
+	for _, p := range a.pluginPaths {
+		for _, s := range suffixes {
+			fullpath := path.Join(p, name) + s
+			if _, err := os.Stat(fullpath); err == nil {
+				return fullpath, nil
+			}
+		}
+	}
+	return "", fmt.Errorf("%s not found", name)
+}
+
+func (a *appS) buildFromJson(jsonBuf []byte) ([]*widgetS, error) {
+	widgets := make([]*widgetS, 0)
+	type SegmentSpec struct {
+		Seg  string
+		Args json.RawMessage
+	}
+	segments := []SegmentSpec{}
+	err := json.Unmarshal(jsonBuf, &segments)
+	if err != nil {
+		log.Error().Err(err).Msg("Unmarshal")
+		a.errors++
+		return nil, err
+	}
+	for _, s := range segments {
+		pluginFile, err := a.resolvePluginPath(s.Seg)
+		if err != nil {
+			log.Error().Err(err).Msg("")
+			a.errors++
+			continue
+		}
+		pluginLib, err := plugin.Open(pluginFile)
+		if err != nil {
+			log.Error().Err(err).Msg("")
+			a.errors++
+			continue
+		}
+		symbol, err := pluginLib.Lookup(SegmentEntrySymbolName)
+		if err != nil {
+			log.Error().Err(err).
+				Str("file", pluginFile).
+				Str("symbol", SegmentEntrySymbolName).
+				Msg("")
+			a.errors++
+			continue
+		}
+		newFunc := symbol.(func([]byte) Segment)
+		argsBuf, _ := s.Args.MarshalJSON()
+		segment := newFunc(argsBuf)
+		widgets = append(widgets, &widgetS{
+			segment: segment,
+		})
+	}
+	return widgets, nil
+}
+
+var jsonText = `
+[
+	{
+		"seg": "cwd"
+	}
+]
+`
+
+func CommandPrompt(app *appS) {
+	// widgets, err := app.buildFromJson([]byte(jsonText))
 }
 
 // import (

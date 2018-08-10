@@ -1,4 +1,4 @@
-golorprompt
 dist/
 .idea/
 samples/
+.vscode/

@@ -9,7 +9,9 @@ packages = \
 
 # gopkg.in/libgit2/git2go.v24 \
 
-prg = $(PWD)/golorprompt
+prg = $(PWD)/dist/bin/golorprompt
+
+prg-debug = $(prg)-debug
 
 local-prg = $(HOME)/.local/bin/golorprompt
 
@@ -35,6 +37,7 @@ dist:: build
 	cd dist && zip -r golorprompt-$(version).zip golorprompt-$(version)
 
 $(prg):: $(srcs)
+	mkdir -p $(dir $(prg))
 	go build -i -o $(prg) -ldflags="-s -w" ./cmd/golorprompt
 
 $(local-prg):: $(srcs)
@@ -45,6 +48,13 @@ clean:: ## Clean compiles or temporary files
 	rm -rf $(dir)
 
 local-install: $(local-prg)
+
+$(prg-debug):: $(srcs)
+	mkdir -p $(dir $(prg-debug))
+	go build -v -i -o $(prg-debug) ./cmd/golorprompt
+
+debug:: $(prg-debug) ## debug a program
+	$(prg-debug) --debug
 
 run:: $(prg) seg-cwd seg-git seg-exitcode seg-jobs seg-user
 

@@ -53,7 +53,30 @@ $(prg-debug):: $(srcs)
 	mkdir -p $(dir $(prg-debug))
 	go build -v -i -o $(prg-debug) ./cmd/golorprompt
 
-debug:: $(prg-debug) ## debug a program
+
+prefix = ./dist
+
+segments_dir = $(prefix)/lib/golorprompt
+
+segments = $(wildcard seg/*)
+
+segment_plugins = $(addprefix $(segments_dir)/, $(addsuffix .so, $(notdir $(segments))))
+
+
+try:: $(segment_plugins)
+	
+
+$(segments_dir)/%:
+	go build -buildmode=plugin -o $@ ./seg/$(notdir $(basename $@))
+
+
+build-plugins::
+	go build -buildmode=plugin -o ./dist/lib/golorprompt/cwd.so ./seg/cwd
+	go build -buildmode=plugin -o ./dist/lib/golorprompt/stub.so ./seg/stub
+	go build -buildmode=plugin -o ./dist/lib/golorprompt/hostname.so ./seg/hostname
+
+
+debug:: build-plugins $(prg-debug) ## debug a program
 	$(prg-debug) --debug
 
 run:: $(prg) seg-cwd seg-git seg-exitcode seg-jobs seg-user

@@ -1,38 +1,41 @@
 package main
 
 import (
+	"encoding/json"
 	"os"
+
+	"github.com/hevi9/golorprompt/sys"
 	"github.com/lucasb-eyer/go-colorful"
-	"log"
+	"github.com/rs/zerolog/log"
 )
 
-func init() {
-	SegRegister("hostname", "Show hostname",
-		func() Segment { return &Hostname{} })
-}
-
 type Hostname struct {
-	Threshold int
+	ShowIfEnv string
 }
 
-func (self *Hostname) Render() []Chunk {
-	if self.Threshold >= 100 {
-		return nil
+func NewWithJson(jsonBuf []byte) sys.Segment {
+	segment := &Hostname{
+		ShowIfEnv: "SSH_CLIENT",
 	}
-	if _, exists := os.LookupEnv("SSH_CLIENT"); self.Threshold >= 50 && ! exists {
+	json.Unmarshal(jsonBuf, segment)
+	return segment
+}
+
+func (self *Hostname) Render(sys.Environment) []sys.Chunk {
+	if _, exists := os.LookupEnv(self.ShowIfEnv); !exists {
 		return nil
 	}
 	var hostname string
 	var err error
 	if hostname, err = os.Hostname(); err != nil {
-		log.Printf("os.Hostname(): %s", err)
+		log.Error().Err(err).Msg("os.Hostname")
 		return nil
 	}
-	hue := 360.0 * hashToFloat64([]byte(hostname))
-	return []Chunk{
-		Chunk{
-			text: hostname,
-			fg:   colorful.Hsv(hue, config.FgSaturationLow, config.FgValue),
+	hue := 360.0 * sys.HashToFloat64([]byte(hostname))
+	return []sys.Chunk{
+		sys.Chunk{
+			Text: hostname,
+			Fg:   colorful.Hsv(hue, sys.Config.FgSaturationLow, sys.Config.FgValue),
 		},
 	}
 }

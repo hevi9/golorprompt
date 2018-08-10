@@ -1,95 +1,57 @@
-// TODO: IDEA @ as a alone hostname hash colored
-
 package sys
 
 import (
-	"encoding/json"
+	"bytes"
 	"fmt"
-	"os"
-	"path"
-	"plugin"
+	"sync"
 
 	"github.com/rs/zerolog/log"
 )
 
-type widgetS struct {
-	segment Segment
-	chunks  []Chunk
-}
-
-type appS struct {
-	pluginPaths []string
-	errors      int
-}
-
-func (a *appS) resolvePluginPath(name string) (string, error) {
-	suffixes := []string{".so", ""}
-	for _, p := range a.pluginPaths {
-		for _, s := range suffixes {
-			fullpath := path.Join(p, name) + s
-			if _, err := os.Stat(fullpath); err == nil {
-				return fullpath, nil
-			}
-		}
-	}
-	return "", fmt.Errorf("%s not found", name)
-}
-
-func (a *appS) buildFromJson(jsonBuf []byte) ([]*widgetS, error) {
-	widgets := make([]*widgetS, 0)
-	type SegmentSpec struct {
-		Seg  string
-		Args json.RawMessage
-	}
-	segments := []SegmentSpec{}
-	err := json.Unmarshal(jsonBuf, &segments)
-	if err != nil {
-		log.Error().Err(err).Msg("Unmarshal")
-		a.errors++
-		return nil, err
-	}
-	for _, s := range segments {
-		pluginFile, err := a.resolvePluginPath(s.Seg)
-		if err != nil {
-			log.Error().Err(err).Msg("")
-			a.errors++
-			continue
-		}
-		pluginLib, err := plugin.Open(pluginFile)
-		if err != nil {
-			log.Error().Err(err).Msg("")
-			a.errors++
-			continue
-		}
-		symbol, err := pluginLib.Lookup(SegmentEntrySymbolName)
-		if err != nil {
-			log.Error().Err(err).
-				Str("file", pluginFile).
-				Str("symbol", SegmentEntrySymbolName).
-				Msg("")
-			a.errors++
-			continue
-		}
-		newFunc := symbol.(func([]byte) Segment)
-		argsBuf, _ := s.Args.MarshalJSON()
-		segment := newFunc(argsBuf)
-		widgets = append(widgets, &widgetS{
-			segment: segment,
-		})
-	}
-	return widgets, nil
-}
-
 var jsonText = `
 [
-	{
-		"seg": "cwd"
-	}
+	{ "seg": "cwd" },
+	{ "seg": "stub" },
+	{ "seg": "hostname", "args": {"showifenv": "HOME"}}
 ]
 `
 
-func CommandPrompt(app *appS) {
-	// widgets, err := app.buildFromJson([]byte(jsonText))
+func CommandPrompt(app *App) error {
+	// build widges from json spec
+	widgets, err := app.buildFromJson([]byte(jsonText))
+	if err != nil {
+		log.Error().Err(err).Msg("Cannot build from json spec")
+		app.AddError(err)
+		return err
+	}
+
+	// render widgets concurrently
+	wg := sync.WaitGroup{}
+	for _, widgetElem := range widgets {
+		wg.Add(1)
+		go func(widgetElem *widgetS) {
+			defer wg.Done()
+			widgetElem.chunks = widgetElem.segment.Render(app)
+		}(widgetElem)
+	}
+	wg.Wait()
+
+	// make layout
+
+	// print widgets
+	buf := bytes.Buffer{}
+	buf.WriteString(Bg(Config.BgLine))
+	for _, widgetElem := range widgets {
+		// fmt.Printf("%#v\n", widgetElem)
+		for _, chunk := range widgetElem.chunks {
+			buf.WriteString(Fg(chunk.Fg))
+			buf.WriteString(shellEscapeZsh(chunk.Text))
+		}
+	}
+	buf.WriteString(Rz())
+	fmt.Printf("%s", buf.String())
+
+	return nil
 }
 
 // import (
@@ -171,15 +133,6 @@ func CommandPrompt(app *appS) {
 // 	// TODO: Shell escape $'s in output
 // 	// TODO: Shell escape \'s in output
 // 	//fmt.Printf("%s\n", strings.Repeat("-", lenTerm))
-// 	buf := bytes.Buffer{}
-// 	buf.WriteString(bg(config.BgLine))
-// 	for _, w := range widgetsLine {
-// 		for _, c := range w.Chunks() {
-// 			buf.WriteString(fg(c.fg))
-// 			buf.WriteString(shellEscape(c.text))
-// 		}
-// 	}
-// 	buf.WriteString(rz())
 // 	buf.WriteString("\n")
 // 	for _, w := range widgetsStart {
 // 		for _, c := range w.Chunks() {
@@ -188,5 +141,4 @@ func CommandPrompt(app *appS) {
 // 		}
 // 	}
 // 	buf.WriteString(rz())
-// 	fmt.Printf("%s", buf.String())
 // }

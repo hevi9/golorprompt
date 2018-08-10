@@ -25,21 +25,24 @@ func main() {
 	command := kingpin.MustParse(cli.Parse(os.Args[1:]))
 
 	if *debugFlag {
-		zerolog.TimeFieldFormat = time.Stamp
+		zerolog.TimeFieldFormat = time.StampMilli
 		zerolog.DurationFieldUnit = time.Second
 		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 	} else {
 		zerolog.SetGlobalLevel(zerolog.Disabled)
 	}
 
+	app := sys.NewApp()
+
 	switch command {
 	case prompt.FullCommand():
-		sys.CommandPrompt()
+		sys.CommandPrompt(app)
 	case show.FullCommand():
 		sys.CommandShow()
 	}
 
 	log.Info().
 		Dur("runtime", time.Since(startTime)).
+		Int("errors", app.Errors()).
 		Msg("done")
 }

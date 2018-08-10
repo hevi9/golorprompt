@@ -1,31 +1,34 @@
 package main
 
-import "github.com/lucasb-eyer/go-colorful"
+import (
+	"github.com/hevi9/golorprompt/sys"
+	"github.com/lucasb-eyer/go-colorful"
+)
 
-func init() {
-	SegRegister("stub", "Show stub segment for development purposes",
-		func() Segment { return &Stub{} })
+type Stub struct {
 }
 
-type Stub struct{}
+func NewWithJson(jsonBuf []byte) sys.Segment {
+	return &Stub{}
+}
 
-func (*Stub) Render() []Chunk {
-	return []Chunk{
-		Chunk{
-			text: "01",
-			fg:   colorful.HappyColor(),
+func (*Stub) Render(sys.Environment) []sys.Chunk {
+	return []sys.Chunk{
+		sys.Chunk{
+			Text: "01",
+			Fg:   colorful.HappyColor(),
 		},
-		Chunk{
-			text: "23",
-			fg:   colorful.HappyColor(),
+		sys.Chunk{
+			Text: "23",
+			Fg:   colorful.HappyColor(),
 		},
-		Chunk{
-			text: "45",
-			fg:   colorful.HappyColor(),
+		sys.Chunk{
+			Text: "45",
+			Fg:   colorful.HappyColor(),
 		},
-		Chunk{
-			text: "6789",
-			fg:   colorful.HappyColor(),
+		sys.Chunk{
+			Text: "6789",
+			Fg:   colorful.HappyColor(),
 		},
 	}
 }

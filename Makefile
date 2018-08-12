@@ -5,9 +5,8 @@ packages = \
   gopkg.in/alecthomas/kingpin.v2 \
   golang.org/x/crypto/ssh/terminal \
   golang.org/x/text/width \
-  github.com/rs/zerolog/log
-
-# gopkg.in/libgit2/git2go.v24 \
+  github.com/rs/zerolog/log \
+  gopkg.in/libgit2/git2go.v24 
 
 prg = $(PWD)/dist/bin/golorprompt
 
@@ -58,13 +57,15 @@ prefix = ./dist
 
 segments_dir = $(prefix)/lib/golorprompt
 
-segments = $(wildcard seg/*)
+segments_1 = $(wildcard seg/*)
+
+blacklist = seg/git2go
+
+segments = $(filter-out $(blacklist),$(segments_1))
 
 segment_plugins = $(addprefix $(segments_dir)/, $(addsuffix .so, $(notdir $(segments))))
 
-
 try:: $(segment_plugins)
-	
 
 $(segments_dir)/%:
 	go build -buildmode=plugin -o $@ ./seg/$(notdir $(basename $@))

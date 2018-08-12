@@ -1,25 +1,26 @@
 package main
 
 import (
-	"os"
-	"log"
-	"strconv"
 	"fmt"
+	"log"
+	"os"
+	"strconv"
+
+	"github.com/hevi9/golorprompt/sys"
 )
 
-func init() {
-	SegRegister("level", "Alert high system load",
-		func() Segment { return &Level{} })
-}
-
 type Level struct{}
+
+func NewWithJson(jsonBuf []byte) sys.Segment {
+	return &Level{}
+}
 
 // SHLVL=0 ? maybe non-interactive shell
 // SHLVL=1 - first interactive shell ?
 
-func (self *Level) Render() []Chunk {
+func (self *Level) Render(sys.Environment) []sys.Chunk {
 	shlvlStr, exists := os.LookupEnv("SHLVL")
-	if ! exists {
+	if !exists {
 		log.Printf("Error: no env var SHLVL")
 		return nil
 	}
@@ -31,5 +32,7 @@ func (self *Level) Render() []Chunk {
 	if shlvl < 2 {
 		return nil
 	}
-	return []Chunk{{text: fmt.Sprintf("%d%s", shlvl, sign.level), fg: config.FgWarning}}
+	return []sys.Chunk{
+		{Text: fmt.Sprintf("%d%s", shlvl, sys.Sign.Level), Fg: sys.Config.FgWarning},
+	}
 }

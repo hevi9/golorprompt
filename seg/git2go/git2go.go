@@ -7,14 +7,10 @@ import (
 	"log"
 	"os"
 
+	"github.com/hevi9/golorprompt/sys"
 	"github.com/lucasb-eyer/go-colorful"
 	"gopkg.in/libgit2/git2go.v24"
 )
-
-func init() {
-	SegRegister("git", "Show git status information",
-		func() Segment { return &Git{} })
-}
 
 // Color levels
 //
@@ -46,24 +42,24 @@ const (
 )
 
 var colorLevelColor = map[int]colorful.Color{
-	ColorLevelOk:      colorful.Hsv(90.0, config.FgSaturationLow, config.FgValue),
-	ColorLevelIgnored: colorful.Hsv(90.0+10.0, config.FgSaturation, config.FgValue),
-	ColorLevelCurrent: colorful.Hsv(90.0+20.0, config.FgSaturation, config.FgValue),
+	ColorLevelOk:      colorful.Hsv(90.0, sys.Config.FgSaturationLow, sys.Config.FgValue),
+	ColorLevelIgnored: colorful.Hsv(90.0+10.0, sys.Config.FgSaturation, sys.Config.FgValue),
+	ColorLevelCurrent: colorful.Hsv(90.0+20.0, sys.Config.FgSaturation, sys.Config.FgValue),
 
-	ColorLevelIndexDeleted:    colorful.Hsv(55.0, config.FgSaturation, config.FgValue),
-	ColorLevelIndexRenamed:    colorful.Hsv(55.0+5.0, config.FgSaturation, config.FgValue),
-	ColorLevelIndexModified:   colorful.Hsv(55.0+10.0, config.FgSaturation, config.FgValue),
-	ColorLevelIndexTypeChange: colorful.Hsv(55.0+15.0, config.FgSaturation, config.FgValue),
-	ColorLevelIndexNew:        colorful.Hsv(55.0+20.0, config.FgSaturation, config.FgValue),
+	ColorLevelIndexDeleted:    colorful.Hsv(55.0, sys.Config.FgSaturation, sys.Config.FgValue),
+	ColorLevelIndexRenamed:    colorful.Hsv(55.0+5.0, sys.Config.FgSaturation, sys.Config.FgValue),
+	ColorLevelIndexModified:   colorful.Hsv(55.0+10.0, sys.Config.FgSaturation, sys.Config.FgValue),
+	ColorLevelIndexTypeChange: colorful.Hsv(55.0+15.0, sys.Config.FgSaturation, sys.Config.FgValue),
+	ColorLevelIndexNew:        colorful.Hsv(55.0+20.0, sys.Config.FgSaturation, sys.Config.FgValue),
 
-	ColorLevelWtDeleted:    colorful.Hsv(25.0, config.FgSaturation, config.FgValue),
-	ColorLevelWtRenamed:    colorful.Hsv(25.0+5.0, config.FgSaturation, config.FgValue),
-	ColorLevelWtModified:   colorful.Hsv(25.0+10.0, config.FgSaturation, config.FgValue),
-	ColorLevelWtTypeChange: colorful.Hsv(25.0+15.0, config.FgSaturation, config.FgValue),
+	ColorLevelWtDeleted:    colorful.Hsv(25.0, sys.Config.FgSaturation, sys.Config.FgValue),
+	ColorLevelWtRenamed:    colorful.Hsv(25.0+5.0, sys.Config.FgSaturation, sys.Config.FgValue),
+	ColorLevelWtModified:   colorful.Hsv(25.0+10.0, sys.Config.FgSaturation, sys.Config.FgValue),
+	ColorLevelWtTypeChange: colorful.Hsv(25.0+15.0, sys.Config.FgSaturation, sys.Config.FgValue),
 
-	ColorLevelWtNew: colorful.Hsv(330.0, config.FgSaturation, config.FgValue),
+	ColorLevelWtNew: colorful.Hsv(330.0, sys.Config.FgSaturation, sys.Config.FgValue),
 
-	ColorLevelConflicted: colorful.Hsv(0.0, config.FgSaturation, config.FgValue),
+	ColorLevelConflicted: colorful.Hsv(0.0, sys.Config.FgSaturation, sys.Config.FgValue),
 }
 
 type GitRepoStatus struct {
@@ -167,7 +163,9 @@ func getRepoStatus(repo *git.Repository) (*GitRepoStatus, error) {
 
 type Git struct{}
 
-func (*Git) Render() []Chunk {
+func main() {}
+
+func (*Git) Render() []sys.Chunk {
 	cwd, err := os.Getwd()
 	if err != nil {
 		log.Printf("Cannot get CWD: %s", err)
@@ -184,7 +182,7 @@ func (*Git) Render() []Chunk {
 		return nil
 	}
 	if repo.IsBare() {
-		return []Chunk{Chunk{text: "-bare-", fg: colorful.HappyColor()}}
+		return []sys.Chunk{sys.Chunk{Text: "-bare-", Fg: colorful.HappyColor()}}
 	}
 	detached, err := repo.IsHeadDetached()
 	if err != nil {
@@ -192,10 +190,10 @@ func (*Git) Render() []Chunk {
 		return nil
 	}
 	if detached {
-		return []Chunk{Chunk{text: "-detached-", fg: colorful.HappyColor()}}
+		return []sys.Chunk{sys.Chunk{Text: "-detached-", Fg: colorful.HappyColor()}}
 	}
 
-	chunks := make([]Chunk, 0)
+	chunks := make([]sys.Chunk, 0)
 
 	// Show head branch
 	var headBranch *git.Branch
@@ -211,7 +209,7 @@ func (*Git) Render() []Chunk {
 			return nil
 		}
 	}
-	headChunk := Chunk{text: headBranchName, fg: colorful.HappyColor()}
+	headChunk := sys.Chunk{Text: headBranchName, Fg: colorful.HappyColor()}
 
 	statusColorLevel := ColorLevelOk
 
@@ -219,90 +217,90 @@ func (*Git) Render() []Chunk {
 	status, err := getRepoStatus(repo)
 	// TODO: handle git status err
 	if status.Total > 0 {
-		chunks = append(chunks, Chunk{text: " "})
+		chunks = append(chunks, sys.Chunk{Text: " "})
 	}
 
 	if status.Current > 0 {
-		chunks = append(chunks, Chunk{
-			text: fmt.Sprintf("%d%c", status.Current, 'c'),
-			fg:   colorLevelColor[ColorLevelCurrent],
+		chunks = append(chunks, sys.Chunk{
+			Text: fmt.Sprintf("%d%c", status.Current, 'c'),
+			Fg:   colorLevelColor[ColorLevelCurrent],
 		})
 	}
 	if status.IndexNew > 0 {
-		statusColorLevel = maxInt(statusColorLevel, ColorLevelIndexNew)
-		chunks = append(chunks, Chunk{
-			text: fmt.Sprintf("%d%c", status.IndexNew, 'n'),
-			fg:   colorLevelColor[ColorLevelIndexNew],
+		statusColorLevel = sys.MaxInt(statusColorLevel, ColorLevelIndexNew)
+		chunks = append(chunks, sys.Chunk{
+			Text: fmt.Sprintf("%d%c", status.IndexNew, 'n'),
+			Fg:   colorLevelColor[ColorLevelIndexNew],
 		})
 	}
 	if status.IndexModified > 0 {
-		statusColorLevel = maxInt(statusColorLevel, ColorLevelIndexModified)
-		chunks = append(chunks, Chunk{
-			text: fmt.Sprintf("%d%c", status.IndexModified, 'm'),
-			fg:   colorLevelColor[ColorLevelIndexModified],
+		statusColorLevel = sys.MaxInt(statusColorLevel, ColorLevelIndexModified)
+		chunks = append(chunks, sys.Chunk{
+			Text: fmt.Sprintf("%d%c", status.IndexModified, 'm'),
+			Fg:   colorLevelColor[ColorLevelIndexModified],
 		})
 	}
 	if status.IndexDeleted > 0 {
-		statusColorLevel = maxInt(statusColorLevel, ColorLevelIndexDeleted)
-		chunks = append(chunks, Chunk{
-			text: fmt.Sprintf("%d%c", status.IndexDeleted, 'd'),
-			fg:   colorLevelColor[ColorLevelIndexDeleted],
+		statusColorLevel = sys.MaxInt(statusColorLevel, ColorLevelIndexDeleted)
+		chunks = append(chunks, sys.Chunk{
+			Text: fmt.Sprintf("%d%c", status.IndexDeleted, 'd'),
+			Fg:   colorLevelColor[ColorLevelIndexDeleted],
 		})
 	}
 	if status.IndexRenamed > 0 {
-		statusColorLevel = maxInt(statusColorLevel, ColorLevelIndexRenamed)
-		chunks = append(chunks, Chunk{
-			text: fmt.Sprintf("%d%c", status.IndexRenamed, 'r'),
-			fg:   colorLevelColor[ColorLevelIndexRenamed],
+		statusColorLevel = sys.MaxInt(statusColorLevel, ColorLevelIndexRenamed)
+		chunks = append(chunks, sys.Chunk{
+			Text: fmt.Sprintf("%d%c", status.IndexRenamed, 'r'),
+			Fg:   colorLevelColor[ColorLevelIndexRenamed],
 		})
 	}
 	if status.IndexTypeChange > 0 {
-		statusColorLevel = maxInt(statusColorLevel, ColorLevelIndexTypeChange)
-		chunks = append(chunks, Chunk{
-			text: fmt.Sprintf("%d%c", status.IndexTypeChange, 't'),
-			fg:   colorLevelColor[ColorLevelIndexTypeChange],
+		statusColorLevel = sys.MaxInt(statusColorLevel, ColorLevelIndexTypeChange)
+		chunks = append(chunks, sys.Chunk{
+			Text: fmt.Sprintf("%d%c", status.IndexTypeChange, 't'),
+			Fg:   colorLevelColor[ColorLevelIndexTypeChange],
 		})
 	}
 	if status.WtNew > 0 {
-		statusColorLevel = maxInt(statusColorLevel, ColorLevelWtNew)
-		chunks = append(chunks, Chunk{
-			text: fmt.Sprintf("%d%c", status.WtNew, 'N'),
-			fg:   colorLevelColor[ColorLevelWtNew],
+		statusColorLevel = sys.MaxInt(statusColorLevel, ColorLevelWtNew)
+		chunks = append(chunks, sys.Chunk{
+			Text: fmt.Sprintf("%d%c", status.WtNew, 'N'),
+			Fg:   colorLevelColor[ColorLevelWtNew],
 		})
 	}
 	if status.WtModified > 0 {
-		statusColorLevel = maxInt(statusColorLevel, ColorLevelWtModified)
-		chunks = append(chunks, Chunk{
-			text: fmt.Sprintf("%d%c", status.WtModified, 'M'),
-			fg:   colorLevelColor[ColorLevelWtModified],
+		statusColorLevel = sys.MaxInt(statusColorLevel, ColorLevelWtModified)
+		chunks = append(chunks, sys.Chunk{
+			Text: fmt.Sprintf("%d%c", status.WtModified, 'M'),
+			Fg:   colorLevelColor[ColorLevelWtModified],
 		})
 	}
 	if status.WtDeleted > 0 {
-		statusColorLevel = maxInt(statusColorLevel, ColorLevelWtDeleted)
-		chunks = append(chunks, Chunk{
-			text: fmt.Sprintf("%d%c", status.WtDeleted, 'D'),
-			fg:   colorLevelColor[ColorLevelWtModified],
+		statusColorLevel = sys.MaxInt(statusColorLevel, ColorLevelWtDeleted)
+		chunks = append(chunks, sys.Chunk{
+			Text: fmt.Sprintf("%d%c", status.WtDeleted, 'D'),
+			Fg:   colorLevelColor[ColorLevelWtModified],
 		})
 	}
 	if status.WtTypeChange > 0 {
-		statusColorLevel = maxInt(statusColorLevel, ColorLevelWtTypeChange)
-		chunks = append(chunks, Chunk{
-			text: fmt.Sprintf("%d%c", status.WtTypeChange, 'T'),
-			fg:   colorLevelColor[ColorLevelWtTypeChange],
+		statusColorLevel = sys.MaxInt(statusColorLevel, ColorLevelWtTypeChange)
+		chunks = append(chunks, sys.Chunk{
+			Text: fmt.Sprintf("%d%c", status.WtTypeChange, 'T'),
+			Fg:   colorLevelColor[ColorLevelWtTypeChange],
 		})
 	}
 	if status.Ignored > 0 {
-		statusColorLevel = maxInt(statusColorLevel, ColorLevelIgnored)
-		chunks = append(chunks, Chunk{
-			text: fmt.Sprintf("%d%c", status.Ignored, 'I'),
-			fg:   colorLevelColor[ColorLevelIgnored],
+		statusColorLevel = sys.MaxInt(statusColorLevel, ColorLevelIgnored)
+		chunks = append(chunks, sys.Chunk{
+			Text: fmt.Sprintf("%d%c", status.Ignored, 'I'),
+			Fg:   colorLevelColor[ColorLevelIgnored],
 		})
 	}
 	if status.Conflicted > 0 {
-		statusColorLevel = maxInt(statusColorLevel, ColorLevelConflicted)
-		chunks = append(chunks, Chunk{
-			text: fmt.Sprintf("%d%c", status.Conflicted, 'C'),
-			fg:   colorLevelColor[ColorLevelConflicted],
+		statusColorLevel = sys.MaxInt(statusColorLevel, ColorLevelConflicted)
+		chunks = append(chunks, sys.Chunk{
+			Text: fmt.Sprintf("%d%c", status.Conflicted, 'C'),
+			Fg:   colorLevelColor[ColorLevelConflicted],
 		})
 	}
 
@@ -313,9 +311,9 @@ func (*Git) Render() []Chunk {
 	if err != nil {
 		// No upstream give a sign
 		//log.Printf("headBranch.Upstream(): %s", err)
-		chunks = append(chunks, Chunk{
-			text: " noup",
-			fg:   config.FgWarning,
+		chunks = append(chunks, sys.Chunk{
+			Text: " noup",
+			Fg:   sys.Config.FgWarning,
 		})
 	} else {
 		ahead, behind, err := repo.AheadBehind(headRef.Target(), upstreamRef.Target())
@@ -323,18 +321,18 @@ func (*Git) Render() []Chunk {
 			log.Printf("repo.AheadBehind(headRef.Target(), upstreamRef.Target()): %s", err)
 		}
 		if ahead > 0 || behind > 0 {
-			chunks = append(chunks, Chunk{text: " "})
+			chunks = append(chunks, sys.Chunk{Text: " "})
 		}
 		if ahead > 0 {
-			chunks = append(chunks, Chunk{
-				text: fmt.Sprintf("%d%s", ahead, sign.ahead),
-				fg:   colorful.HappyColor(), // TODO: Set ahead color
+			chunks = append(chunks, sys.Chunk{
+				Text: fmt.Sprintf("%d%s", ahead, sys.Sign.Ahead),
+				Fg:   colorful.HappyColor(), // TODO: Set ahead color
 			})
 		}
 		if behind > 0 {
-			chunks = append(chunks, Chunk{
-				text: fmt.Sprintf("%d%s", behind, sign.behind),
-				fg:   colorful.HappyColor(), // TODO: Set behind color
+			chunks = append(chunks, sys.Chunk{
+				Text: fmt.Sprintf("%d%s", behind, sys.Sign.Behind),
+				Fg:   colorful.HappyColor(), // TODO: Set behind color
 			})
 		}
 	}
@@ -343,16 +341,16 @@ func (*Git) Render() []Chunk {
 	state := repo.State()
 	if state != git.RepositoryStateNone {
 		name := stateName(state)
-		hue := 360.0 * hashToFloat64([]byte(name))
-		chunks = append(chunks, Chunk{
-			text: name,
-			fg:   colorful.Hsv(hue, config.FgSaturation, config.FgValue),
+		hue := 360.0 * sys.HashToFloat64([]byte(name))
+		chunks = append(chunks, sys.Chunk{
+			Text: name,
+			Fg:   colorful.Hsv(hue, sys.Config.FgSaturation, sys.Config.FgValue),
 		})
 	}
 
 	// add head name chuck to front
-	headChunk.fg = colorLevelColor[statusColorLevel]
-	chunks = append([]Chunk{headChunk}, chunks...)
+	headChunk.Fg = colorLevelColor[statusColorLevel]
+	chunks = append([]sys.Chunk{headChunk}, chunks...)
 
 	// TODO: Show stash, when git2go used from version v24+
 

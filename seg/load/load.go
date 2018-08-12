@@ -1,24 +1,32 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
-	"github.com/shirou/gopsutil/load"
-	"github.com/shirou/gopsutil/cpu"
-	"github.com/lucasb-eyer/go-colorful"
 	"math"
-	"log"
-)
 
-func init() {
-	SegRegister("load", "Alert high system load",
-		func() Segment { return &Load{} })
-}
+	"github.com/hevi9/golorprompt/sys"
+	"github.com/lucasb-eyer/go-colorful"
+	"github.com/rs/zerolog/log"
+	"github.com/shirou/gopsutil/cpu"
+	"github.com/shirou/gopsutil/load"
+)
 
 type Load struct {
 	Threshold int
 }
 
-func (self *Load) Render() []Chunk {
+func NewWithJson(jsonBuf []byte) sys.Segment {
+	segment := &Load{}
+	// TODO have error ++ here
+	err := json.Unmarshal(jsonBuf, segment)
+	if err != nil {
+		return nil
+	}
+	return segment
+}
+
+func (self *Load) Render(env sys.Environment) []sys.Chunk {
 
 	cpus, err := cpu.Counts(true)
 	if err != nil {
@@ -26,15 +34,15 @@ func (self *Load) Render() []Chunk {
 	}
 	stat, err := load.Avg()
 	if err != nil {
-		log.Printf("load.Avg(): %s", err)
+		log.Error().Err(err).Msg("load.Avg")
 		return nil
 	}
-	if stat.Load1 < ( 2.0 * float64(cpus) * float64(self.Threshold) / 100.0 ) {
+	if stat.Load1 < (2.0 * float64(cpus) * float64(self.Threshold) / 100.0) {
 		return nil
 	}
 	loadScale := 1.0 - math.Min(stat.Load1/(2.0*float64(cpus)), 1.0)
-	return []Chunk{{
-		text: fmt.Sprintf("%.2f%s", stat.Load1, sign.load),
-		fg:   colorful.Hsv(90.0*loadScale, config.FgSaturation, config.FgValue),
+	return []sys.Chunk{{
+		Text: fmt.Sprintf("%.2f%s", stat.Load1, sys.Sign.Load),
+		Fg:   colorful.Hsv(90.0*loadScale, sys.Config.FgSaturation, sys.Config.FgValue),
 	}}
 }

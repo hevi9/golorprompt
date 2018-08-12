@@ -10,12 +10,12 @@ type Signs struct {
 	flag      string
 	skull     string
 	jobs      string
-	level     string
+	Level     string
 	disk      string
 	memory    string
 	untracked string
-	ahead     string
-	behind    string
+	Ahead     string
+	Behind    string
 	diverged  string
 	differ    string
 	stashes   string
@@ -26,35 +26,7 @@ type Signs struct {
 	action    string
 	location  string
 	check     string
-	load      string
-}
-
-type Marks struct {
-	cont      rune
-	plus      rune
-	cross     rune
-	dot       rune
-	dots      rune
-	star      rune
-	flag      rune
-	skull     rune
-	jobs      rune
-	level     rune
-	disk      rune
-	memory    rune
-	untracked rune
-	ahead     rune
-	behind    rune
-	diverged  rune
-	differ    rune
-	stashes   rune
-	start     rune
-	file      rune
-	dir       rune
-	todo      rune
-	action    rune
-	location  rune
-	check     rune
+	Load      string
 }
 
 var sign1 = Signs{
@@ -67,12 +39,12 @@ var sign1 = Signs{
 	flag:      "⚑", // 1 char
 	skull:     "!", // TODO: change to error
 	jobs:      "⚙", // 1 char
-	level:     "⮇", // 1 char but bad
+	Level:     "⮇", // 1 char but bad
 	disk:      "o", // 1 char
 	memory:    "🖫", // 2 char
 	untracked: "?",
-	ahead:     "⭱", // 1 char
-	behind:    "⭳", // 1 char
+	Ahead:     "⭱", // 1 char
+	Behind:    "⭳", // 1 char
 	diverged:  "⭿", // 1 char
 	differ:    "⭾", // 1 char
 	stashes:   "≡", // 1 char
@@ -95,12 +67,12 @@ var sign2 = Signs{
 	flag:      "⚑", // 1 char
 	skull:     "🕱", // 2 char
 	jobs:      "⚙", // 1 char
-	level:     "⮇", // 1 char but bad
+	Level:     "⮇", // 1 char but bad
 	disk:      "🖸", // 2 char
 	memory:    "🖫", // 2 char
 	untracked: "?",
-	ahead:     "⭱", // 1 char
-	behind:    "⭳", // 1 char
+	Ahead:     "⭱", // 1 char
+	Behind:    "⭳", // 1 char
 	diverged:  "⭿", // 1 char
 	differ:    "⭾", // 1 char
 	stashes:   "≡", // 1 char
@@ -125,12 +97,12 @@ var sign3 = Signs{
 	flag:      "F",
 	skull:     "!",
 	jobs:      "⚙",
-	level:     "L",
+	Level:     "L",
 	disk:      "D",
 	memory:    "M",
 	untracked: "?",
-	ahead:     "⭱",
-	behind:    "⭳",
+	Ahead:     "⭱",
+	Behind:    "⭳",
 	diverged:  "⁑",
 	differ:    "±",
 	stashes:   "≡",
@@ -141,10 +113,38 @@ var sign3 = Signs{
 	action:    "A",
 	location:  "l",
 	check:     "c",
-	load:      "⌆",
+	Load:      "⌆",
 }
 
-var sign = sign3
+var Sign = sign3
+
+type Marks struct {
+	cont      rune
+	plus      rune
+	cross     rune
+	dot       rune
+	dots      rune
+	star      rune
+	flag      rune
+	skull     rune
+	jobs      rune
+	level     rune
+	disk      rune
+	memory    rune
+	untracked rune
+	Ahead     rune
+	Behind    rune
+	diverged  rune
+	differ    rune
+	stashes   rune
+	start     rune
+	file      rune
+	dir       rune
+	todo      rune
+	action    rune
+	location  rune
+	check     rune
+}
 
 var mark1 = Marks{
 	cont:      '…', // 1 char
@@ -160,8 +160,8 @@ var mark1 = Marks{
 	disk:      '🖸', // 2 char
 	memory:    '🖫', // 2 char
 	untracked: '?',
-	ahead:     '⭱', // 1 char
-	behind:    '⭳', // 1 char
+	Ahead:     '⭱', // 1 char
+	Behind:    '⭳', // 1 char
 	diverged:  '⭿', // 1 char
 	differ:    '⭾', // 1 char
 	stashes:   '≡', // 1 char

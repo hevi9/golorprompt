@@ -1,20 +1,17 @@
 package main
 
 import (
-	"os"
-	"github.com/shirou/gopsutil/process"
 	"log"
-	"github.com/lucasb-eyer/go-colorful"
-)
+	"os"
 
-func init() {
-	SegRegister("jobs", "Show jobs under shell",
-		func() Segment { return &Jobs{} })
-}
+	"github.com/hevi9/golorprompt/sys"
+	"github.com/lucasb-eyer/go-colorful"
+	"github.com/shirou/gopsutil/process"
+)
 
 type Jobs struct{}
 
-func (self Jobs) Render() []Chunk {
+func (self Jobs) Render() []sys.Chunk {
 	thisProcess, err := process.NewProcess(int32(os.Getpid()))
 	if err != nil {
 		log.Printf("Error: process.NewProcess(int32(os.Getpid())): %s", err)
@@ -30,7 +27,7 @@ func (self Jobs) Render() []Chunk {
 		log.Printf("Error: parentProcess.Children(): %s", err)
 		return nil
 	}
-	chunks := make([]Chunk, 0)
+	chunks := make([]sys.Chunk, 0)
 	for _, child := range children {
 		status, err := child.Status()
 		if child.Pid == thisProcess.Pid {
@@ -40,12 +37,12 @@ func (self Jobs) Render() []Chunk {
 			log.Printf("Error: child.Status(): %s", err)
 			continue
 		}
-		chunks = append(chunks, Chunk{
-			text: status,
-			fg:   colorful.Hsv(statusToHue(status), config.FgSaturation, config.FgValue)})
+		chunks = append(chunks, sys.Chunk{
+			Text: status,
+			Fg:   colorful.Hsv(statusToHue(status), sys.Config.FgSaturation, sys.Config.FgValue)})
 	}
 	if len(chunks) > 0 {
-		chunks = append(chunks, Chunk{text: sign.jobs, fg: config.FgDefault})
+		chunks = append(chunks, sys.Chunk{Text: sys.Sign.Jobs, Fg: sys.Config.FgDefault})
 	}
 	return chunks
 }

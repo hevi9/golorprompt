@@ -1,20 +1,14 @@
-// TODO: Show marker if defined file exists in CWD
-
 package main
 
 import (
+	"encoding/json"
 	"os"
+
+	"github.com/hevi9/golorprompt/sys"
 	"github.com/lucasb-eyer/go-colorful"
 )
 
-func init() {
-	SegRegister(
-		"ifile", "Show sign if given file exists in CWD",
-		func() Segment {
-			return &Ifile{}
-		},
-	)
-}
+func main() {}
 
 type Ifile struct {
 	Filename string
@@ -22,12 +16,23 @@ type Ifile struct {
 	Hue      float64
 }
 
-func (self *Ifile) Render() []Chunk {
+func NewWithJson(jsonBuf []byte) sys.Segment {
+	segment := &Ifile{}
+	// TODO have error ++ here
+	err := json.Unmarshal(jsonBuf, segment)
+	if err != nil {
+		return nil
+	}
+	return segment
+}
+
+func (self *Ifile) Render(env sys.Environment) []sys.Chunk {
 	//log.Printf("Ifile.Render: %s %s %f", self.Filename, self.Sign, self.Hue)
 	if _, err := os.Stat(self.Filename); os.IsNotExist(err) {
 		return nil
 	}
-	return []Chunk{
-		{text: self.Sign, fg: colorful.Hsv(self.Hue, config.FgSaturation, config.FgValue)},
-	}
+	return []sys.Chunk{{
+		Text: self.Sign,
+		Fg:   colorful.Hsv(self.Hue, sys.Config.FgSaturation, sys.Config.FgValue),
+	}}
 }

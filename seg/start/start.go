@@ -1,21 +1,24 @@
 package main
 
 import (
+	"github.com/hevi9/golorprompt/sys"
 	"github.com/lucasb-eyer/go-colorful"
 )
 
-func init() {
-	SegRegister("start", "Show prompt start sign",
-		func() Segment { return &Start{} })
-}
+func main() {}
 
 type Start struct{}
 
-func (*Start) Render() []Chunk {
-	return []Chunk{
-		Chunk{
-			text: sign.start,
-			fg:   colorful.Hsv(45.0, config.FgSaturation, config.FgValue),
+func NewWithJson(jsonBuf []byte) sys.Segment {
+	segment := &Start{}
+	return segment
+}
+
+func (*Start) Render(env sys.Environment) []sys.Chunk {
+	return []sys.Chunk{
+		sys.Chunk{
+			Text: sys.Sign.Start,
+			Fg:   colorful.Hsv(45.0, sys.Config.FgSaturation, sys.Config.FgValue),
 		},
 	}
 }

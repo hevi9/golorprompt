@@ -1,23 +1,31 @@
 package main
 
 import (
-	"github.com/shirou/gopsutil/mem"
+	"encoding/json"
 	"fmt"
-	"github.com/lucasb-eyer/go-colorful"
-	"math"
 	"log"
-)
+	"math"
 
-func init() {
-	SegRegister("mem", "Alert high system memory usage",
-		func() Segment { return &Mem{} })
-}
+	"github.com/hevi9/golorprompt/sys"
+	"github.com/lucasb-eyer/go-colorful"
+	"github.com/shirou/gopsutil/mem"
+)
 
 type Mem struct {
 	Threshold int
 }
 
-func (self *Mem) Render() []Chunk {
+func NewWithJson(jsonBuf []byte) sys.Segment {
+	segment := &Mem{}
+	// TODO have error ++ here
+	err := json.Unmarshal(jsonBuf, segment)
+	if err != nil {
+		return nil
+	}
+	return segment
+}
+
+func (self *Mem) Render(env sys.Environment) []sys.Chunk {
 	stat, err := mem.VirtualMemory()
 	if err != nil {
 		log.Printf("mem.VirtualMemory(): %s", err)
@@ -27,10 +35,12 @@ func (self *Mem) Render() []Chunk {
 		return nil
 	}
 	valueScale := 1.0 - math.Min(stat.UsedPercent/100.0, 1.0)
-	return []Chunk{
-		Chunk{
-			text: fmt.Sprintf("%2.f%%%s", stat.UsedPercent, sign.memory),
-			fg:   colorful.Hsv(90.0*valueScale, config.FgSaturation, config.FgValue),
+	return []sys.Chunk{
+		sys.Chunk{
+			Text: fmt.Sprintf("%2.f%%%s", stat.UsedPercent, sys.Sign.Memory),
+			Fg: colorful.Hsv(90.0*valueScale,
+				sys.Config.FgSaturation,
+				sys.Config.FgValue),
 		},
 	}
 }

@@ -1,20 +1,24 @@
 package main
 
 import (
-	"github.com/lucasb-eyer/go-colorful"
-	user2 "os/user"
 	"log"
 	"os"
+	user2 "os/user"
+
+	"github.com/hevi9/golorprompt/sys"
+	"github.com/lucasb-eyer/go-colorful"
 )
 
-func init() {
-	SegRegister("user", "Show user",
-		func() Segment { return &User{} })
-}
+func main() {}
 
 type User struct{}
 
-func (*User) Render() []Chunk {
+func NewWithJson(jsonBuf []byte) sys.Segment {
+	segment := &User{}
+	return segment
+}
+
+func (*User) Render(env sys.Environment) []sys.Chunk {
 	user, err := user2.Current()
 	if err != nil {
 		log.Print("Error: Cannot get current user: %s", err)
@@ -26,17 +30,17 @@ func (*User) Render() []Chunk {
 	logName, exists := os.LookupEnv("LOGNAME")
 	if exists {
 		_, exists := os.LookupEnv("SUDO_USER")
-		if ! exists {
+		if !exists {
 			if logName == username {
 				return nil
 			}
 		}
 	}
-	hue := 300.0*hashToFloat64([]byte(username)) + 30.0
-	return []Chunk{
+	hue := 300.0*sys.HashToFloat64([]byte(username)) + 30.0
+	return []sys.Chunk{
 		{
-			text: username,
-			fg:   colorful.Hsv(hue, config.FgSaturationLow, config.FgValue),
+			Text: username,
+			Fg:   colorful.Hsv(hue, sys.Config.FgSaturationLow, sys.Config.FgValue),
 		},
 	}
 }

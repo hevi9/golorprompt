@@ -1,23 +1,24 @@
 package main
 
-// TODO: Change minute coloring based on hour of day section. Section = 24/3
-
 import (
+	"github.com/hevi9/golorprompt/sys"
 	"github.com/lucasb-eyer/go-colorful"
-	//"math"
-	"time"
+
 	"fmt"
 	"math"
+	"time"
 )
 
-func init() {
-	SegRegister("time", "Show time",
-		func() Segment { return &Time{} })
-}
+func main() {}
 
 type Time struct{}
 
-func (*Time) Render() []Chunk {
+func NewWithJson(jsonBuf []byte) sys.Segment {
+	segment := &Time{}
+	return segment
+}
+
+func (*Time) Render(env sys.Environment) []sys.Chunk {
 	time1 := time.Now()
 
 	hour := time1.Hour()
@@ -28,18 +29,21 @@ func (*Time) Render() []Chunk {
 	min := time1.Minute()
 	minValueScale := math.Min(float64(min)/59.0001, 1.0)
 
-	return []Chunk{
-		Chunk{
-			text: fmt.Sprintf("%02d", hour),
-			fg:   colorful.Hsv(hourHue, config.FgSaturation, config.FgValue),
+	return []sys.Chunk{
+		sys.Chunk{
+			Text: fmt.Sprintf("%02d", hour),
+			Fg:   colorful.Hsv(hourHue, sys.Config.FgSaturation, sys.Config.FgValue),
 		},
-		Chunk{
-			text: ":",
-			fg:   config.FgDefault,
+		sys.Chunk{
+			Text: ":",
+			Fg:   sys.Config.FgDefault,
 		},
-		Chunk{
-			text: fmt.Sprintf("%02d", min),
-			fg:   colorful.Hsv(180.0*minValueScale+180.0, config.FgSaturationLow, config.FgValue),
+		sys.Chunk{
+			Text: fmt.Sprintf("%02d", min),
+			Fg: colorful.Hsv(
+				180.0*minValueScale+180.0,
+				sys.Config.FgSaturationLow,
+				sys.Config.FgValue),
 			//fg:   colorful.Hsv(hourHue, config.FgSaturation, config.FgValue),
 		},
 	}

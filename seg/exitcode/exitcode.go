@@ -1,19 +1,25 @@
 package main
 
 import (
-	"strconv"
-	"log"
-	"github.com/lucasb-eyer/go-colorful"
+	"encoding/json"
 	"fmt"
+	"log"
+	"strconv"
+
+	"github.com/hevi9/golorprompt/sys"
+	"github.com/lucasb-eyer/go-colorful"
 )
 
-func init() {
-	SegRegister("exitcode", "Show program exit code if non zero",
-		func() Segment { return &ExitCode{} })
-}
+type ExitCode struct{}
 
-type ExitCode struct {
-	Threshold int
+func NewWithJson(jsonBuf []byte) sys.Segment {
+	segment := &ExitCode{}
+	// TODO have error ++ here
+	err := json.Unmarshal(jsonBuf, segment)
+	if err != nil {
+		return nil
+	}
+	return segment
 }
 
 // http://man7.org/linux/man-pages/man7/signal.7.html
@@ -49,47 +55,47 @@ var linuxSignalsX86 = map[int]string{
 
 func getRcDesc(rc int) (string, colorful.Color) {
 	if rc == 126 {
-		return "NOPERM", colorful.Hsv(15.0, config.FgSaturation, config.FgValue)
+		return "NOPERM", colorful.Hsv(15.0, sys.Config.FgSaturation, sys.Config.FgValue)
 	}
 	if rc == 127 {
-		return "NOTFOUND", colorful.Hsv(30.0, config.FgSaturation, config.FgValue)
+		return "NOTFOUND", colorful.Hsv(30.0, sys.Config.FgSaturation, sys.Config.FgValue)
 	}
 	value, exits := linuxSignalsX86[rc-128]
 	if exits {
-		return value, colorful.Hsv(360.0-30.0, config.FgSaturation, config.FgValue)
+		return value, colorful.Hsv(360.0-30.0, sys.Config.FgSaturation, sys.Config.FgValue)
 	}
-	return "", colorful.Hsv(0.0, config.FgSaturation, config.FgValue)
+	return "", colorful.Hsv(0.0, sys.Config.FgSaturation, sys.Config.FgValue)
 }
 
-func (self *ExitCode) Render() []Chunk {
-	rcStr, exists := config.Args["RC"]
-	if ! exists {
+func (self *ExitCode) Render(env sys.Environment) []sys.Chunk {
+	rcStr, exists := sys.Config.Args["RC"]
+	if !exists {
 		return nil
 	}
 	rc, err := strconv.Atoi(rcStr)
 	if err != nil {
 		log.Printf("strconv.Atoi(%s): %s", rcStr, err)
-		return []Chunk{Chunk{text: "ERR", fg: colorful.Hsv(0.0, config.FgSaturation, config.FgValue)}}
+		return []sys.Chunk{sys.Chunk{Text: "ERR", Fg: colorful.Hsv(0.0, sys.Config.FgSaturation, sys.Config.FgValue)}}
 	}
 	if rc < 0 || rc > 255 {
 		log.Printf("Invalid RC=%d", rc)
-		return []Chunk{Chunk{text: "ERR", fg: colorful.Hsv(0.0, config.FgSaturation, config.FgValue)}}
+		return []sys.Chunk{sys.Chunk{Text: "ERR", Fg: colorful.Hsv(0.0, sys.Config.FgSaturation, sys.Config.FgValue)}}
 	}
 	if rc == 0 {
 		return nil
 	}
-	chunks := make([]Chunk, 0)
+	chunks := make([]sys.Chunk, 0)
 	desc, color := getRcDesc(rc)
 
 	if len(desc) > 0 {
-		chunks = append(chunks, Chunk{
-			text: fmt.Sprintf("%s ", desc),
-			fg:   color,
+		chunks = append(chunks, sys.Chunk{
+			Text: fmt.Sprintf("%s ", desc),
+			Fg:   color,
 		})
 	}
-	chunks = append(chunks, Chunk{
-		text: fmt.Sprintf("%d%s", rc, sign.skull),
-		fg:   color,
+	chunks = append(chunks, sys.Chunk{
+		Text: fmt.Sprintf("%d%s", rc, sys.Sign.Skull),
+		Fg:   color,
 	})
 	return chunks
 }

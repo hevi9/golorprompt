@@ -1,177 +1,119 @@
 package sys
 
 type Signs struct {
-	cont      string
-	plus      string
-	cross     string
-	dot       string
-	dots      string
-	star      string
-	flag      string
-	skull     string
-	jobs      string
+	Cont      string
+	Plus      string
+	Cross     string
+	Dot       string
+	Dots      string
+	Star      string
+	Flag      string
+	Skull     string
+	Jobs      string
 	Level     string
-	disk      string
-	memory    string
-	untracked string
+	Disk      string
+	Memory    string
+	Untracked string
 	Ahead     string
 	Behind    string
-	diverged  string
-	differ    string
-	stashes   string
-	start     string
-	file      string
-	dir       string
-	todo      string
-	action    string
-	location  string
-	check     string
+	Diverged  string
+	Differ    string
+	Stashes   string
+	Start     string
+	File      string
+	Dir       string
+	Todo      string
+	Action    string
+	Location  string
+	Check     string
 	Load      string
 }
 
 var sign1 = Signs{
-	cont:      "…", // 1 char
-	plus:      "✚", // 1 char, bad
-	cross:     "✖", // 1 char, bad
-	dot:       "●", // 1 char
-	dots:      "⛬", // 1char
-	star:      "*",
-	flag:      "⚑", // 1 char
-	skull:     "!", // TODO: change to error
-	jobs:      "⚙", // 1 char
+	Cont:      "…", // 1 char
+	Plus:      "✚", // 1 char, bad
+	Cross:     "✖", // 1 char, bad
+	Dot:       "●", // 1 char
+	Dots:      "⛬", // 1char
+	Star:      "*",
+	Flag:      "⚑", // 1 char
+	Skull:     "!", // TODO: change to error
+	Jobs:      "⚙", // 1 char
 	Level:     "⮇", // 1 char but bad
-	disk:      "o", // 1 char
-	memory:    "🖫", // 2 char
-	untracked: "?",
+	Disk:      "o", // 1 char
+	Memory:    "🖫", // 2 char
+	Untracked: "?",
 	Ahead:     "⭱", // 1 char
 	Behind:    "⭳", // 1 char
-	diverged:  "⭿", // 1 char
-	differ:    "⭾", // 1 char
-	stashes:   "≡", // 1 char
-	start:     "▶", // 1 char
-	file:      "🗎", // 2 char
-	dir:       "📁", // 2 char
-	todo:      "🔨", // 2 char
-	action:    "↯", // 1 char
-	location:  "⌘", // 1char
-	check:     "🗹", // 2 char
+	Diverged:  "⭿", // 1 char
+	Differ:    "⭾", // 1 char
+	Stashes:   "≡", // 1 char
+	Start:     "▶", // 1 char
+	File:      "🗎", // 2 char
+	Dir:       "📁", // 2 char
+	Todo:      "🔨", // 2 char
+	Action:    "↯", // 1 char
+	Location:  "⌘", // 1char
+	Check:     "🗹", // 2 char
 }
 
 var sign2 = Signs{
-	cont:      "…", // 1 char
-	plus:      "✚", // 1 char, bad
-	cross:     "✖", // 1 char, bad
-	dot:       "●", // 1 char
-	dots:      "⛬", // 1char
-	star:      "🟉", // 2 char
-	flag:      "⚑", // 1 char
-	skull:     "🕱", // 2 char
-	jobs:      "⚙", // 1 char
+	Cont:      "…", // 1 char
+	Plus:      "✚", // 1 char, bad
+	Cross:     "✖", // 1 char, bad
+	Dot:       "●", // 1 char
+	Dots:      "⛬", // 1char
+	Star:      "🟉", // 2 char
+	Flag:      "⚑", // 1 char
+	Skull:     "🕱", // 2 char
+	Jobs:      "⚙", // 1 char
 	Level:     "⮇", // 1 char but bad
-	disk:      "🖸", // 2 char
-	memory:    "🖫", // 2 char
-	untracked: "?",
+	Disk:      "🖸", // 2 char
+	Memory:    "🖫", // 2 char
+	Untracked: "?",
 	Ahead:     "⭱", // 1 char
 	Behind:    "⭳", // 1 char
-	diverged:  "⭿", // 1 char
-	differ:    "⭾", // 1 char
-	stashes:   "≡", // 1 char
-	start:     "▶", // 1 char
-	//start:     "🡆",
-	file:     "🗎", // 2 char
-	dir:      "📁", // 2 char
-	todo:     "🔨", // 2 char
-	action:   "↯", // 1 char
-	location: "⌘", // 1char
-	check:    "🗹", // 2 char
+	Diverged:  "⭿", // 1 char
+	Differ:    "⭾", // 1 char
+	Stashes:   "≡", // 1 char
+	Start:     "▶", // 1 char
+	//Start:     "🡆",
+	File:     "🗎", // 2 char
+	Dir:      "📁", // 2 char
+	Todo:     "🔨", // 2 char
+	Action:   "↯", // 1 char
+	Location: "⌘", // 1char
+	Check:    "🗹", // 2 char
 }
 
 // non problematic characters
 var sign3 = Signs{
-	cont:      "…",
-	plus:      "+",
-	cross:     "x",
-	dot:       ".",
-	dots:      "..",
-	star:      "*",
-	flag:      "F",
-	skull:     "!",
-	jobs:      "⚙",
+	Cont:      "…",
+	Plus:      "+",
+	Cross:     "x",
+	Dot:       ".",
+	Dots:      "..",
+	Star:      "*",
+	Flag:      "F",
+	Skull:     "!",
+	Jobs:      "⚙",
 	Level:     "L",
-	disk:      "D",
-	memory:    "M",
-	untracked: "?",
+	Disk:      "D",
+	Memory:    "M",
+	Untracked: "?",
 	Ahead:     "⭱",
 	Behind:    "⭳",
-	diverged:  "⁑",
-	differ:    "±",
-	stashes:   "≡",
-	start:     "▶",
-	file:      "F",
-	dir:       "D",
-	todo:      "T",
-	action:    "A",
-	location:  "l",
-	check:     "c",
+	Diverged:  "⁑",
+	Differ:    "±",
+	Stashes:   "≡",
+	Start:     "▶",
+	File:      "F",
+	Dir:       "D",
+	Todo:      "T",
+	Action:    "A",
+	Location:  "l",
+	Check:     "c",
 	Load:      "⌆",
 }
 
 var Sign = sign3
-
-type Marks struct {
-	cont      rune
-	plus      rune
-	cross     rune
-	dot       rune
-	dots      rune
-	star      rune
-	flag      rune
-	skull     rune
-	jobs      rune
-	level     rune
-	disk      rune
-	memory    rune
-	untracked rune
-	Ahead     rune
-	Behind    rune
-	diverged  rune
-	differ    rune
-	stashes   rune
-	start     rune
-	file      rune
-	dir       rune
-	todo      rune
-	action    rune
-	location  rune
-	check     rune
-}
-
-var mark1 = Marks{
-	cont:      '…', // 1 char
-	plus:      '✚', // 1 char, bad
-	cross:     '✖', // 1 char, bad
-	dot:       '●', // 1 char
-	dots:      '⛬', // 1char
-	star:      '🟉', // 2 char
-	flag:      '⚑', // 1 char
-	skull:     '🕱', // 2 char
-	jobs:      '⚙', // 1 char
-	level:     '⮇', // 1 char but bad
-	disk:      '🖸', // 2 char
-	memory:    '🖫', // 2 char
-	untracked: '?',
-	Ahead:     '⭱', // 1 char
-	Behind:    '⭳', // 1 char
-	diverged:  '⭿', // 1 char
-	differ:    '⭾', // 1 char
-	stashes:   '≡', // 1 char
-	start:     '▶', // 1 char
-	file:      '🗎', // 2 char
-	dir:       '📁', // 2 char
-	todo:      '🔨', // 2 char
-	action:    '↯', // 1 char
-	location:  '⌘', // 1char
-	check:     '🗹', // 2 char
-}
-
-var mark = mark1

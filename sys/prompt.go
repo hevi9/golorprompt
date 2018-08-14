@@ -12,6 +12,7 @@ var jsonText = `
 [
 	{ "seg": "cwd" },
 	{ "seg": "stub" },
+	{ "seg": "disk" },
 	{ "seg": "hostname", "args": {"showifenv": "HOME"}}
 ]
 `

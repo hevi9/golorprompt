@@ -16,7 +16,26 @@ local-prg = $(HOME)/.local/bin/golorprompt
 
 dir = samples
 
-srcs := $(wildcard *.go)
+sys_srcs := $(wildcard sys/*.go)
+
+prefix = ./dist
+
+seg_srcs =  $(wildcard seg/**/*.go)
+
+segments_dir = $(prefix)/lib/golorprompt
+
+segments_1 = $(wildcard seg/*)
+
+blacklist = seg/git2go
+
+segments = $(filter-out $(blacklist),$(segments_1))
+
+segment_plugins = $(addprefix $(segments_dir)/, $(addsuffix .so, $(notdir $(segments))))
+
+
+
+
+##############################################################################
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
@@ -52,19 +71,8 @@ $(prg-debug):: $(srcs)
 	mkdir -p $(dir $(prg-debug))
 	go build -v -i -o $(prg-debug) ./cmd/golorprompt
 
-prefix = ./dist
-
-segments_dir = $(prefix)/lib/golorprompt
-
-segments_1 = $(wildcard seg/*)
-
-blacklist = seg/git2go
-
-segments = $(filter-out $(blacklist),$(segments_1))
-
-segment_plugins = $(addprefix $(segments_dir)/, $(addsuffix .so, $(notdir $(segments))))
-
-$(segments_dir)/%:
+# -linkshared has no effect to memory size
+$(segments_dir)/%: $(sys_srcs) $(seg_srcs)
 	go build -buildmode=plugin -o $@ ./seg/$(notdir $(basename $@))
 
 debug:: $(segment_plugins) $(prg-debug) ## debug a program

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"math"
 
@@ -14,6 +15,16 @@ func main() { /*dummy*/ }
 
 type Disk struct {
 	Threshold int
+}
+
+func NewWithJson(jsonBuf []byte) sys.Segment {
+	segment := &Disk{}
+	// TODO have error ++ here
+	err := json.Unmarshal(jsonBuf, segment)
+	if err != nil {
+		return nil
+	}
+	return segment
 }
 
 func (self *Disk) Render(env sys.Environment) []sys.Chunk {

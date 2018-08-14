@@ -10,10 +10,20 @@ import (
 
 var jsonText = `
 [
-	{ "seg": "cwd" },
+	{ "seg": "level" },
 	{ "seg": "stub" },
+	{ "seg": "envvar" },
+	{ "seg": "exitcode" },
+	{ "seg": "cwd" },
+	{ "seg": "load" },
+	{ "seg": "jobs" },
 	{ "seg": "disk" },
-	{ "seg": "hostname", "args": {"showifenv": "HOME"}}
+	{ "seg": "start" },
+	{ "seg": "ifile" },
+	{ "seg": "user" },
+	{ "seg": "mem" },
+	{ "seg": "hostname", "args": {"showifenv": "HOME"}},
+	{ "seg": "time" }	
 ]
 `
 

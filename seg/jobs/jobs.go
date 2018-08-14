@@ -9,9 +9,16 @@ import (
 	"github.com/shirou/gopsutil/process"
 )
 
+func main() { /*dummy*/ }
+
 type Jobs struct{}
 
-func (self Jobs) Render() []sys.Chunk {
+func NewWithJson(jsonBuf []byte) sys.Segment {
+	segment := &Jobs{}
+	return segment
+}
+
+func (self Jobs) Render(env sys.Environment) []sys.Chunk {
 	thisProcess, err := process.NewProcess(int32(os.Getpid()))
 	if err != nil {
 		log.Printf("Error: process.NewProcess(int32(os.Getpid())): %s", err)

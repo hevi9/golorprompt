@@ -1,5 +1,3 @@
-// TODO: IDEA @ as a alone hostname hash colored
-
 package sys
 
 import (

@@ -8,6 +8,8 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"gopkg.in/alecthomas/kingpin.v2"
+
+	_ "github.com/hevi9/golorprompt/seg/cwd"
 )
 
 var (

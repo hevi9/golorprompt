@@ -35,7 +35,23 @@ type Segment interface {
 	Render(env Environment) []Chunk
 }
 
-// NewSegmentFunc Function signature to call segment creation
+// NewWithJSONFunc Function signature to call segment creation
 // function from plugin. Not (yet) used as type, just a
 // specification.
-type NewSegmentFunc func([]byte) Segment
+type NewWithJSONFunc func([]byte) (Segment, error)
+
+type segmentInfo struct {
+	name            string
+	desc            string
+	newWithJSONFunc NewWithJSONFunc
+}
+
+var segmentRegistry = map[string]*segmentInfo{}
+
+func Register(name string, desc string, newFunc NewWithJSONFunc) {
+	segmentRegistry[name] = &segmentInfo{
+		name:            name,
+		desc:            desc,
+		newWithJSONFunc: newFunc,
+	}
+}

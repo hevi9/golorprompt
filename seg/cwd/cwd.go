@@ -1,4 +1,4 @@
-package main
+package cwd
 
 import (
 	"log"
@@ -10,13 +10,19 @@ import (
 	"golang.org/x/sys/unix"
 )
 
-type Cwd struct{}
+type cwdS struct{}
 
-func NewWithJson(jsonText []byte) sys.Segment {
-	return &Cwd{}
+func init() {
+	sys.Register(
+		"cwd",
+		"Show current working directory",
+		func(jsonBuf []byte) (sys.Segment, error) {
+			return &cwdS{}, nil
+		},
+	)
 }
 
-func (*Cwd) Render(env sys.Environment) []sys.Chunk {
+func (*cwdS) Render(env sys.Environment) []sys.Chunk {
 	var cwd string
 	var err error
 

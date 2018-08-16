@@ -1,4 +1,4 @@
-package main
+package disk
 
 import (
 	"encoding/json"
@@ -11,27 +11,30 @@ import (
 	"github.com/shirou/gopsutil/disk"
 )
 
-func main() { /*dummy*/ }
-
 type Disk struct {
 	Threshold int
 }
 
-func NewWithJson(jsonBuf []byte) sys.Segment {
-	segment := &Disk{}
-	// TODO have error ++ here
-	err := json.Unmarshal(jsonBuf, segment)
-	if err != nil {
-		return nil
-	}
-	return segment
+func init() {
+	sys.Register(
+		"disk",
+		"Alert for disk capacity",
+		func(jsonBuf []byte) (sys.Segment, error) {
+			segment := &Disk{}
+			err := json.Unmarshal(jsonBuf, segment)
+			if err != nil {
+				return nil, err
+			}
+			log.Debug().Int("threshold", segment.Threshold).Msg("disk args")
+			return segment, nil
+		},
+	)
 }
 
 func (self *Disk) Render(env sys.Environment) []sys.Chunk {
 	stat, err := disk.Usage(".")
 	if err != nil {
 		log.Error().Err(err).Msg("disk.Usage")
-		env.AddError(err)
 		return nil
 	}
 	if stat.UsedPercent < float64(self.Threshold) {

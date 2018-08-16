@@ -1,4 +1,4 @@
-package main
+package level
 
 import (
 	"fmt"
@@ -11,8 +11,14 @@ import (
 
 type Level struct{}
 
-func NewWithJson(jsonBuf []byte) sys.Segment {
-	return &Level{}
+func init() {
+	sys.Register(
+		"level",
+		"Show shell level",
+		func(jsonBuf []byte) (sys.Segment, error) {
+			return &Level{}, nil
+		},
+	)
 }
 
 // SHLVL=0 ? maybe non-interactive shell

@@ -8,19 +8,17 @@ packages = \
   github.com/rs/zerolog/log \
   gopkg.in/libgit2/git2go.v24 
 
-prg = $(PWD)/dist/bin/golorprompt
-
-prg-debug = $(prg)-debug
-
-local-prg = $(HOME)/.local/bin/golorprompt
-
-dir = samples
-
-sys_srcs := $(wildcard sys/*.go)
-
 prefix = ./dist
 
-seg_srcs =  $(wildcard seg/**/*.go)
+prg_name = golorprompt
+
+prg_bin = $(prefix)/bin/$(prg_name)
+
+prg_srcs = $(wildcard cmd/golorprompt/*.go)
+
+sys_srcs = $(wildcard sys/*.go)
+
+seg_srcs =  $(wildcard seg/*/*.go)
 
 segments_dir = $(prefix)/lib/golorprompt
 
@@ -32,7 +30,9 @@ segments = $(filter-out $(blacklist),$(segments_1))
 
 segment_plugins = $(addprefix $(segments_dir)/, $(addsuffix .so, $(notdir $(segments))))
 
+dir = XXXXXXXXXXXXXXXXXXXXXXX
 
+version = $(shell git describe)
 
 
 ##############################################################################
@@ -40,42 +40,27 @@ segment_plugins = $(addprefix $(segments_dir)/, $(addsuffix .so, $(notdir $(segm
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
-all:: build
-
 get:: ## Get used go packages
 	go get -v $(packages)
 
-build:: $(prg) ## Compile program and plugins
+build:: $(prg_bin) ## Compile program and plugins
 
-version = $(shell git describe)
+$(prg_bin): $(prg_srcs) $(sys_srcs) $(seg_srcs)
+	go build -i -o $@ -ldflags="-s -w" ./cmd/golorprompt
+
+
 
 dist:: build
 	mkdir -p dist/golorprompt-$(version)
 	cp $(prg) dist/golorprompt-$(version)
 	cd dist && zip -r golorprompt-$(version).zip golorprompt-$(version)
 
-$(prg):: $(srcs)
-	mkdir -p $(dir $(prg))
-	go build -i -o $(prg) -ldflags="-s -w" ./cmd/golorprompt
-
-$(local-prg):: $(srcs)
-	go build -i -o $@ -ldflags="-s -w" .
-
-clean:: ## Clean compiles or temporary files
-	rm -f $(prg)
-	rm -rf $(dir)
-
-local-install: $(local-prg)
-
-$(prg-debug):: $(srcs)
-	mkdir -p $(dir $(prg-debug))
-	go build -v -i -o $(prg-debug) ./cmd/golorprompt
 
 # -linkshared has no effect to memory size
 $(segments_dir)/%: $(sys_srcs) $(seg_srcs)
 	go build -buildmode=plugin -o $@ ./seg/$(notdir $(basename $@))
 
-debug:: $(segment_plugins) $(prg-debug) ## debug a program
+debug2:: $(segment_plugins) $(prg-debug) ## debug a program
 	$(prg-debug) --debug
 
 run:: $(prg) seg-cwd seg-git seg-exitcode seg-jobs seg-user

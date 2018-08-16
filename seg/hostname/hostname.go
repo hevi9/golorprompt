@@ -1,4 +1,4 @@
-package main
+package hostname
 
 import (
 	"encoding/json"
@@ -13,12 +13,24 @@ type Hostname struct {
 	ShowIfEnv string
 }
 
-func NewWithJson(jsonBuf []byte) sys.Segment {
-	segment := &Hostname{
-		ShowIfEnv: "SSH_CLIENT",
-	}
-	json.Unmarshal(jsonBuf, segment)
-	return segment
+func init() {
+	sys.Register(
+		"hostname",
+		"Show hostname if envvar exists",
+		func(jsonBuf []byte) (sys.Segment, error) {
+			segment := &Hostname{
+				ShowIfEnv: "SSH_CLIENT",
+			}
+			err := json.Unmarshal(jsonBuf, segment)
+			if err != nil {
+				return nil, err
+			}
+			log.Debug().
+				Str("showifenv", segment.ShowIfEnv).
+				Msg("hostname args")
+			return segment, nil
+		},
+	)
 }
 
 func (self *Hostname) Render(sys.Environment) []sys.Chunk {

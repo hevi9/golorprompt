@@ -32,7 +32,27 @@ var Config = struct {
 	Paths:           []string{"./dist/lib/golorprompt"},
 }
 
-var defaultJson = `
+// DefaultConfigJSONBuf Default prompt configuration
+var DefaultConfigJSONBuf = []byte(`
+[
+	{ "seg": "cwd" },
+	{ "seg": "disk", "args": {"threshold":55} },
+	{ "seg": "envvar", "args": {"envvar":"HOME", "show":"asis", "sign":"@"} },
+	{ "seg": "exitcode" },
+	{ "seg": "hostname" },
+	{ "seg": "ifile", "args": {"filename":"Makefile", "sign":"§", "hue": 0} },
+	{ "seg": "jobs" },
+	{ "seg": "level" },
+	{ "seg": "load", "args": {"threshold": 10} },
+	{ "seg": "mem", "args": {"threshold": 10} },
+	{ "seg": "start" },
+	{ "seg": "stub" },
+	{ "seg": "time" },
+	{ "seg": "user" }
+]
+`)
+
+var defaultJsonV1 = `
 {
   "left": [
     {"seg": "hostname",

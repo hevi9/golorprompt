@@ -1,4 +1,4 @@
-package main
+package user
 
 import (
 	"log"
@@ -9,19 +9,25 @@ import (
 	"github.com/lucasb-eyer/go-colorful"
 )
 
-func main() {}
-
 type User struct{}
 
-func NewWithJson(jsonBuf []byte) sys.Segment {
-	segment := &User{}
-	return segment
+// TODO: config to show user always
+
+func init() {
+	sys.Register(
+		"user",
+		"Show user",
+		func(jsonBuf []byte) (sys.Segment, error) {
+			segment := &User{}
+			return segment, nil
+		},
+	)
 }
 
 func (*User) Render(env sys.Environment) []sys.Chunk {
 	user, err := user2.Current()
 	if err != nil {
-		log.Print("Error: Cannot get current user: %s", err)
+		log.Printf("Error: Cannot get current user: %s", err)
 		return nil
 	}
 	username := user.Username
@@ -29,6 +35,7 @@ func (*User) Render(env sys.Environment) []sys.Chunk {
 	// Don't show user if login user
 	logName, exists := os.LookupEnv("LOGNAME")
 	if exists {
+		// But show user always if sudo shell
 		_, exists := os.LookupEnv("SUDO_USER")
 		if !exists {
 			if logName == username {

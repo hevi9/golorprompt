@@ -1,4 +1,4 @@
-package main
+package jobs
 
 import (
 	"log"
@@ -9,13 +9,16 @@ import (
 	"github.com/shirou/gopsutil/process"
 )
 
-func main() { /*dummy*/ }
-
 type Jobs struct{}
 
-func NewWithJson(jsonBuf []byte) sys.Segment {
-	segment := &Jobs{}
-	return segment
+func init() {
+	sys.Register(
+		"jobs",
+		"Show jobs started from this shell",
+		func(jsonBuf []byte) (sys.Segment, error) {
+			return &Jobs{}, nil
+		},
+	)
 }
 
 func (self Jobs) Render(env sys.Environment) []sys.Chunk {

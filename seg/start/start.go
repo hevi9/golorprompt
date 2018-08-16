@@ -1,4 +1,4 @@
-package main
+package start
 
 import (
 	"github.com/hevi9/golorprompt/sys"
@@ -9,9 +9,15 @@ func main() {}
 
 type Start struct{}
 
-func NewWithJson(jsonBuf []byte) sys.Segment {
-	segment := &Start{}
-	return segment
+func init() {
+	sys.Register(
+		"start",
+		"Show a sign",
+		func(jsonBuf []byte) (sys.Segment, error) {
+			segment := &Start{}
+			return segment, nil
+		},
+	)
 }
 
 func (*Start) Render(env sys.Environment) []sys.Chunk {

@@ -1,5 +1,6 @@
 package sys
 
+// CommandShow Show infromation about program
 func CommandShow() {
 
 }

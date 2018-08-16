@@ -1,8 +1,7 @@
-package main
+package envvar
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
 	"path"
 
@@ -17,14 +16,24 @@ type EnvVar struct {
 	Sign   string
 }
 
-func NewWithJson(jsonBuf []byte) sys.Segment {
-	segment := &EnvVar{}
-	// TODO have error ++ here
-	err := json.Unmarshal(jsonBuf, segment)
-	if err != nil {
-		return nil
-	}
-	return segment
+func init() {
+	sys.Register(
+		"envvar",
+		"Show environment variable",
+		func(jsonBuf []byte) (sys.Segment, error) {
+			segment := &EnvVar{}
+			err := json.Unmarshal(jsonBuf, segment)
+			if err != nil {
+				return nil, err
+			}
+			log.Debug().
+				Str("envvar", segment.Envvar).
+				Str("show", segment.Show).
+				Str("sign", segment.Sign).
+				Msg("envvar args")
+			return segment, nil
+		},
+	)
 }
 
 // Render ...
@@ -41,7 +50,6 @@ func (self *EnvVar) Render(env sys.Environment) []sys.Chunk {
 			value = showFunc(self, value)
 		} else {
 			log.Error().Str("show", self.Show).Msg("Show function does not exists")
-			env.AddError(fmt.Errorf("Show function does not exists"))
 		}
 		hue := sys.HashToFloat64([]byte(value))
 		chunks = append(chunks, sys.Chunk{

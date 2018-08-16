@@ -1,15 +1,21 @@
-package main
+package stub
 
 import (
 	"github.com/hevi9/golorprompt/sys"
 	"github.com/lucasb-eyer/go-colorful"
 )
 
-type Stub struct {
-}
+type Stub struct{}
 
-func NewWithJson(jsonBuf []byte) sys.Segment {
-	return &Stub{}
+func init() {
+	sys.Register(
+		"stub",
+		"Stub segment for development",
+		func(jsonBuf []byte) (sys.Segment, error) {
+			segment := &Stub{}
+			return segment, nil
+		},
+	)
 }
 
 func (*Stub) Render(sys.Environment) []sys.Chunk {
@@ -27,7 +33,11 @@ func (*Stub) Render(sys.Environment) []sys.Chunk {
 			Fg:   colorful.HappyColor(),
 		},
 		sys.Chunk{
-			Text: "6789",
+			Text: "67",
+			Fg:   colorful.HappyColor(),
+		},
+		sys.Chunk{
+			Text: "89",
 			Fg:   colorful.HappyColor(),
 		},
 	}

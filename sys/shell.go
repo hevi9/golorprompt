@@ -8,4 +8,6 @@ func shellEscapeZsh(in string) (out string) {
 	return out
 }
 
+// TODO: None shell shell
+
 // http://tldp.org/HOWTO/Bash-Prompt-HOWTO/bash-prompt-escape-sequences.html

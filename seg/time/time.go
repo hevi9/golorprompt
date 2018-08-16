@@ -1,4 +1,4 @@
-package main
+package time
 
 import (
 	"github.com/hevi9/golorprompt/sys"
@@ -9,13 +9,17 @@ import (
 	"time"
 )
 
-func main() {}
-
 type Time struct{}
 
-func NewWithJson(jsonBuf []byte) sys.Segment {
-	segment := &Time{}
-	return segment
+func init() {
+	sys.Register(
+		"time",
+		"Show time",
+		func(jsonBuf []byte) (sys.Segment, error) {
+			segment := &Time{}
+			return segment, nil
+		},
+	)
 }
 
 func (*Time) Render(env sys.Environment) []sys.Chunk {

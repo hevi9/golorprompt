@@ -4,6 +4,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/lucasb-eyer/go-colorful"
+	"github.com/rs/zerolog/log"
 )
 
 const (
@@ -13,9 +14,7 @@ const (
 
 // Environment Shared interace for running data
 type Environment interface {
-	// Errors In program execution
-	Errors() int
-	AddError(error) Environment
+	Errors() int // Errors In program execution
 }
 
 // Chunk Printed part in prompt
@@ -48,7 +47,12 @@ type segmentInfo struct {
 
 var segmentRegistry = map[string]*segmentInfo{}
 
+// Register Add segment to registry
 func Register(name string, desc string, newFunc NewWithJSONFunc) {
+	_, ok := segmentRegistry[name]
+	if ok {
+		log.Warn().Str("seg", name).Msg("already exists")
+	}
 	segmentRegistry[name] = &segmentInfo{
 		name:            name,
 		desc:            desc,

@@ -1,13 +1,13 @@
-package main
+package mem
 
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"math"
 
 	"github.com/hevi9/golorprompt/sys"
 	"github.com/lucasb-eyer/go-colorful"
+	"github.com/rs/zerolog/log"
 	"github.com/shirou/gopsutil/mem"
 )
 
@@ -15,14 +15,22 @@ type Mem struct {
 	Threshold int
 }
 
-func NewWithJson(jsonBuf []byte) sys.Segment {
-	segment := &Mem{}
-	// TODO have error ++ here
-	err := json.Unmarshal(jsonBuf, segment)
-	if err != nil {
-		return nil
-	}
-	return segment
+func init() {
+	sys.Register(
+		"mem",
+		"Alert high memory usage",
+		func(jsonBuf []byte) (sys.Segment, error) {
+			segment := &Mem{}
+			err := json.Unmarshal(jsonBuf, segment)
+			if err != nil {
+				return nil, err
+			}
+			log.Debug().
+				Int("threshold", segment.Threshold).
+				Msg("mem args")
+			return segment, nil
+		},
+	)
 }
 
 func (self *Mem) Render(env sys.Environment) []sys.Chunk {

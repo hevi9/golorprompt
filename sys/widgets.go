@@ -10,6 +10,11 @@ type Widget interface {
 	Chunks() []Chunk
 }
 
+type widgetS struct {
+	segment Segment
+	chunks  []Chunk
+}
+
 func widgetsLen(widgets []Widget) int {
 	length := 0
 	for i := range widgets {

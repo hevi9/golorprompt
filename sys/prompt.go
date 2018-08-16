@@ -8,31 +8,12 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-var jsonText = `
-[
-	{ "seg": "level" },
-	{ "seg": "stub" },
-	{ "seg": "envvar" },
-	{ "seg": "exitcode" },
-	{ "seg": "cwd" },
-	{ "seg": "load" },
-	{ "seg": "jobs" },
-	{ "seg": "disk" },
-	{ "seg": "start" },
-	{ "seg": "ifile" },
-	{ "seg": "user" },
-	{ "seg": "mem" },
-	{ "seg": "hostname", "args": {"showifenv": "HOME"}},
-	{ "seg": "time" }	
-]
-`
-
-func CommandPrompt(app *App) error {
+// CommandPrompt Build prompt from given json spec
+func CommandPrompt(app *App, jsonBuf []byte) error {
 	// build widges from json spec
-	widgets, err := app.buildFromJson([]byte(jsonText))
+	widgets, err := app.buildFromJson(jsonBuf)
 	if err != nil {
 		log.Error().Err(err).Msg("Cannot build from json spec")
-		app.AddError(err)
 		return err
 	}
 

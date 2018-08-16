@@ -1,4 +1,4 @@
-package main
+package ifile
 
 import (
 	"encoding/json"
@@ -6,9 +6,8 @@ import (
 
 	"github.com/hevi9/golorprompt/sys"
 	"github.com/lucasb-eyer/go-colorful"
+	"github.com/rs/zerolog/log"
 )
-
-func main() {}
 
 type Ifile struct {
 	Filename string
@@ -16,14 +15,24 @@ type Ifile struct {
 	Hue      float64
 }
 
-func NewWithJson(jsonBuf []byte) sys.Segment {
-	segment := &Ifile{}
-	// TODO have error ++ here
-	err := json.Unmarshal(jsonBuf, segment)
-	if err != nil {
-		return nil
-	}
-	return segment
+func init() {
+	sys.Register(
+		"ifile",
+		"Show sign if file exists",
+		func(jsonBuf []byte) (sys.Segment, error) {
+			segment := &Ifile{}
+			err := json.Unmarshal(jsonBuf, segment)
+			if err != nil {
+				return nil, err
+			}
+			log.Debug().
+				Str("filename", segment.Filename).
+				Str("sign", segment.Sign).
+				Float64("hue", segment.Hue).
+				Msg("ifile args")
+			return segment, nil
+		},
+	)
 }
 
 func (self *Ifile) Render(env sys.Environment) []sys.Chunk {

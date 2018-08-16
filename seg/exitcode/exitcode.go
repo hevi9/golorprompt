@@ -1,7 +1,6 @@
-package main
+package exitcode
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"strconv"
@@ -12,14 +11,15 @@ import (
 
 type ExitCode struct{}
 
-func NewWithJson(jsonBuf []byte) sys.Segment {
-	segment := &ExitCode{}
-	// TODO have error ++ here
-	err := json.Unmarshal(jsonBuf, segment)
-	if err != nil {
-		return nil
-	}
-	return segment
+func init() {
+	sys.Register(
+		"exitcode",
+		"Show and describe exit code",
+		func(jsonBuf []byte) (sys.Segment, error) {
+			segment := &ExitCode{}
+			return segment, nil
+		},
+	)
 }
 
 // http://man7.org/linux/man-pages/man7/signal.7.html

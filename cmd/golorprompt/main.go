@@ -1,7 +1,10 @@
 package main
 
 import (
+	"fmt"
+	"io/ioutil"
 	"os"
+	"path"
 	"time"
 
 	"github.com/hevi9/golorprompt/sys"
@@ -20,8 +23,8 @@ import (
 	_ "github.com/hevi9/golorprompt/seg/level"
 	_ "github.com/hevi9/golorprompt/seg/load"
 	_ "github.com/hevi9/golorprompt/seg/mem"
-	_ "github.com/hevi9/golorprompt/seg/start"
 	_ "github.com/hevi9/golorprompt/seg/stub"
+	_ "github.com/hevi9/golorprompt/seg/text"
 	_ "github.com/hevi9/golorprompt/seg/time"
 	_ "github.com/hevi9/golorprompt/seg/user"
 )
@@ -43,22 +46,26 @@ func main() {
 	app := sys.NewApp()
 	command := kingpin.MustParse(cli.Parse(os.Args[1:]))
 
-	if *debugFlag {
-		zerolog.TimeFieldFormat = time.StampMilli
-		zerolog.DurationFieldUnit = time.Second
-		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr}).Hook(app)
-		// hook https://github.com/rs/zerolog/blob/master/log_example_test.go
-	} else {
+	// setup logging
+	zerolog.TimeFieldFormat = time.StampMilli
+	zerolog.DurationFieldUnit = time.Second
+	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr}).Hook(app)
+	// hook https://github.com/rs/zerolog/blob/master/log_example_test.go
+	if !*debugFlag {
 		zerolog.SetGlobalLevel(zerolog.Disabled)
 	}
 
-	// TODO: Get config json buf
+	// Find config
 	// 1.cli flag 2. env var 3. default home loc 4. inbuild default
+	jsonBuf := readAndResolveConfigFile(*config)
+	if jsonBuf == nil {
+		jsonBuf = sys.DefaultConfigJSONBuf
+	}
 
 	// Run command
 	switch command {
 	case prompt.FullCommand():
-		sys.CommandPrompt(app, sys.DefaultConfigJSONBuf)
+		sys.CommandPrompt(app, jsonBuf)
 	case show.FullCommand():
 		sys.CommandShow()
 	}
@@ -67,4 +74,37 @@ func main() {
 		Dur("runtime", time.Since(startTime)).
 		Int("errors", app.Errors()).
 		Msg("done")
+}
+
+func readAndResolveConfigFile(config string) []byte {
+	filePath, err := resolveConfigFile(config)
+	if filePath == "" || err != nil {
+		return nil
+	}
+	buf, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		log.Error().Err(err).Str("filePath", filePath).Msg("Cannot read file")
+		return nil
+	}
+	return buf
+}
+
+func resolveConfigFile(config string) (string, error) {
+	if config != "" {
+		return config, nil
+	}
+	value, ok := os.LookupEnv("GOLORPROMPT_CONFIG")
+	if ok {
+		return value, nil
+	}
+	value, ok = os.LookupEnv("HOME")
+	if !ok {
+		log.Error().Str("envvar", "HOME").Msg("Cannot get home path from envvar")
+		return "", fmt.Errorf("Cannot get home path from envvar")
+	}
+	filePath := path.Join(value, ".config", "golorprompt", "prompt.json")
+	if _, err := os.Stat(filePath); os.IsExist(err) {
+		return filePath, nil
+	}
+	return "", nil
 }

@@ -6,7 +6,9 @@ packages = \
   golang.org/x/crypto/ssh/terminal \
   golang.org/x/text/width \
   github.com/rs/zerolog/log \
+  github.com/mattn/go-runewidth \
   gopkg.in/libgit2/git2go.v24 
+  
 
 prefix = ./dist
 

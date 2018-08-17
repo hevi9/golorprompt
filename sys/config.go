@@ -35,6 +35,8 @@ var Config = struct {
 // DefaultConfigJSONBuf Default prompt configuration
 var DefaultConfigJSONBuf = []byte(`
 [
+	{ "seg": "text", "args": {"text": "🔨"} },
+	{ "seg": "text", "args": {"text": "🗎", "hue": 180} },
 	{ "seg": "cwd" },
 	{ "seg": "disk", "args": {"threshold":55} },
 	{ "seg": "envvar", "args": {"envvar":"HOME", "show":"asis", "sign":"@"} },
@@ -44,11 +46,12 @@ var DefaultConfigJSONBuf = []byte(`
 	{ "seg": "jobs" },
 	{ "seg": "level" },
 	{ "seg": "load", "args": {"threshold": 10} },
-	{ "seg": "mem", "args": {"threshold": 10} },
-	{ "seg": "start" },
+	{ "seg": "mem", "args": {"threshold": 10} },	
 	{ "seg": "stub" },
 	{ "seg": "time" },
-	{ "seg": "user" }
+	{ "seg": "text", "args": {"text": "\n"} },
+	{ "seg": "user" },
+	{ "seg": "text", "args": {"text": "▶ ", "hue": 45} }
 ]
 `)
 

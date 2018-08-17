@@ -1,9 +1,6 @@
 package sys
 
 import (
-	"unicode/utf8"
-
-	"github.com/lucasb-eyer/go-colorful"
 	"github.com/rs/zerolog/log"
 )
 
@@ -15,18 +12,6 @@ const (
 // Environment Shared interace for running data
 type Environment interface {
 	Errors() int // Errors In program execution
-}
-
-// Chunk Printed part in prompt
-type Chunk struct {
-	Text string
-	Fg   colorful.Color
-	Bg   colorful.Color
-}
-
-// Len Unicode characters in chunk
-func (c *Chunk) Len() int {
-	return utf8.RuneCountInString(c.Text)
 }
 
 // Segment Segment interaction interface

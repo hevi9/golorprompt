@@ -15,6 +15,11 @@ type widgetS struct {
 	chunks  []Chunk
 }
 
+type segmentWidget struct {
+	segment Segment
+	chunks  []Chunk
+}
+
 func widgetsLen(widgets []Widget) int {
 	length := 0
 	for i := range widgets {
@@ -28,11 +33,6 @@ func widgetsLen(widgets []Widget) int {
 // func SegmentWidget(segment Segment) Widget {
 // 	return &segmentWidget{segment: segment}
 // }
-
-type segmentWidget struct {
-	segment Segment
-	chunks  []Chunk
-}
 
 // func (self *segmentWidget) Allocate(maxLen int) {
 // 	chunks := self.segment.Render()

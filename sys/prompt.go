@@ -10,8 +10,11 @@ import (
 
 // CommandPrompt Build prompt from given json spec
 func CommandPrompt(app *App, jsonBuf []byte) error {
+	// set shell
+	Config.Shell = noneShell
+
 	// build widges from json spec
-	widgets, err := app.buildFromJson(jsonBuf)
+	widgets, err := app.buildFromJSON(jsonBuf)
 	if err != nil {
 		log.Error().Err(err).Msg("Cannot build from json spec")
 		return err
@@ -21,26 +24,30 @@ func CommandPrompt(app *App, jsonBuf []byte) error {
 	wg := sync.WaitGroup{}
 	for _, widgetElem := range widgets {
 		wg.Add(1)
-		go func(widgetElem *widgetS) {
+		go func(widgetElem Widget) {
 			defer wg.Done()
-			widgetElem.chunks = widgetElem.segment.Render(app)
+			widgetElem.Render(app, 100)
 		}(widgetElem)
 	}
 	wg.Wait()
 
 	// make layout
+	lines := makeLayout(widgets)
 
 	// print widgets
 	buf := bytes.Buffer{}
-	buf.WriteString(Bg(Config.BgLine))
-	for _, widgetElem := range widgets {
-		// fmt.Printf("%#v\n", widgetElem)
-		for _, chunk := range widgetElem.chunks {
-			buf.WriteString(Fg(chunk.Fg))
-			buf.WriteString(shellEscapeZsh(chunk.Text))
+	for idx, line := range lines {
+		log.Debug().Int("idx", idx).Msg("line")
+		buf.WriteString(Bg(Config.BgLine))
+		for _, widgetElem := range line {
+			// fmt.Printf("%#v\n", widgetElem)
+			for _, chunk := range widgetElem.Chunks() {
+				buf.WriteString(Fg(chunk.Fg))
+				buf.WriteString(Config.Shell.escapeFunc(chunk.Text))
+			}
 		}
+		buf.WriteString(Rz())
 	}
-	buf.WriteString(Rz())
 	fmt.Printf("%s", buf.String())
 
 	return nil

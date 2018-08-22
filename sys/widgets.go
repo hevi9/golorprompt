@@ -4,101 +4,53 @@ import (
 	"strings"
 )
 
+// Widget Interchangeable interface to manage widgets
 type Widget interface {
-	Allocate(maxLen int)
+	Render(env Environment, maxLen int)
 	Len() int
 	Chunks() []Chunk
-}
-
-type widgetS struct {
-	segment Segment
-	chunks  []Chunk
-}
-
-type segmentWidget struct {
-	segment Segment
-	chunks  []Chunk
+	Name() string
 }
 
 func widgetsLen(widgets []Widget) int {
 	length := 0
-	for i := range widgets {
-		length += widgets[i].Len()
+	for _, w := range widgets {
+		length += w.Len()
 	}
 	return length
 }
 
 //////////////////////////////////////////////////////////////////////////////
+// segment widget
 
-// func SegmentWidget(segment Segment) Widget {
-// 	return &segmentWidget{segment: segment}
-// }
+type segmentWidget struct {
+	name    string
+	segment Segment
+	chunks  []Chunk
+}
 
-// func (self *segmentWidget) Allocate(maxLen int) {
-// 	chunks := self.segment.Render()
-// 	length := 0
-// 	j := 0
-// 	for i := len(chunks) - 1; i >= 0; i -= 1 {
-// 		length += chunks[i].Len()
-// 		if length > maxLen {
-// 			break
-// 		}
-// 		j = i
-// 	}
-// 	self.chunks = chunks[j:]
-// 	if self.Len() > maxLen {
-// 		log.Printf("segmentWidget: Allocate: maxLen=%d w.Len()=%d chunks=%v\n",
-// 			maxLen, self.Len(), self.chunks)
-// 	}
-// }
+func (w *segmentWidget) Render(env Environment, maxLen int) {
+	w.chunks = w.segment.Render(env)
+}
 
-func (self *segmentWidget) Len() int {
+func (w *segmentWidget) Len() int {
 	length := 0
-	for _, c := range self.chunks {
+	for _, c := range w.chunks {
 		length += c.Len()
 	}
 	return length
 }
 
-func (self *segmentWidget) Chunks() []Chunk {
-	return self.chunks
+func (w *segmentWidget) Chunks() []Chunk {
+	return w.chunks
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// space
-
-func Space() Widget {
-	return &spaceWidget{len: 1}
-}
-
-type spaceWidget struct {
-	len int
-}
-
-func (self *spaceWidget) Allocate(maxLen int) {
-	if maxLen < 1 {
-		self.len = 0
-	}
-}
-
-func (self *spaceWidget) Len() int {
-	return self.len
-}
-
-func (self *spaceWidget) Chunks() []Chunk {
-	if self.len != 0 {
-		return []Chunk{{Text: " "}}
-	} else {
-		return nil
-	}
+func (w *segmentWidget) Name() string {
+	return w.name
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // filler
-
-func Filler() Widget {
-	return &fillerWidget{}
-}
 
 type fillerWidget struct {
 	length int
@@ -115,6 +67,6 @@ func (s *fillerWidget) Len() int {
 func (s *fillerWidget) Chunks() []Chunk {
 
 	return []Chunk{
-		Chunk{Text: strings.Repeat(" ", MaxInt(s.length, 1))},
+		Chunk{Text: strings.Repeat(" ", maxInt(s.length, 1))},
 	}
 }

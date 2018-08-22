@@ -1,5 +1,6 @@
 package sys
 
+// Signs preselected signs
 type Signs struct {
 	Cont      string
 	Plus      string
@@ -84,6 +85,7 @@ var sign2 = Signs{
 	Action:   "↯", // 1 char
 	Location: "⌘", // 1char
 	Check:    "🗹", // 2 char
+	Load:     "≡",
 }
 
 // non problematic characters
@@ -116,4 +118,5 @@ var sign3 = Signs{
 	Load:      "⌆",
 }
 
-var Sign = sign3
+// Sign preselected sign set
+var Sign = sign2

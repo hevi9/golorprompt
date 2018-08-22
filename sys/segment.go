@@ -4,11 +4,6 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-const (
-	// SegmentEntrySymbolName New segment creation function name
-	SegmentEntrySymbolName = "NewWithJson"
-)
-
 // Environment Shared interace for running data
 type Environment interface {
 	Errors() int // Errors In program execution

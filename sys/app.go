@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"path"
-	"plugin"
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -61,8 +60,8 @@ func (a *App) NewSegmentByNameJSON(name string, jsonBuf []byte) (Segment, error)
 	return segment, nil
 }
 
-func (a *App) buildFromJson(jsonBuf []byte) ([]*widgetS, error) {
-	widgets := make([]*widgetS, 0)
+func (a *App) buildFromJSON(jsonBuf []byte) ([]Widget, error) {
+	widgets := make([]Widget, 0)
 	type SegmentSpec struct {
 		Seg  string
 		Args json.RawMessage
@@ -83,53 +82,54 @@ func (a *App) buildFromJson(jsonBuf []byte) ([]*widgetS, error) {
 			log.Error().Err(err).Msg("NewSegmentByNameJSON")
 			continue
 		}
-		widgets = append(widgets, &widgetS{
+		widgets = append(widgets, &segmentWidget{
+			name:    s.Seg,
 			segment: segment,
 		})
 	}
 	return widgets, nil
 }
 
-func (a *App) buildFromJsonSYMBOLVERSION(jsonBuf []byte) ([]*widgetS, error) {
-	widgets := make([]*widgetS, 0)
-	type SegmentSpec struct {
-		Seg  string
-		Args json.RawMessage
-	}
-	segments := []SegmentSpec{}
-	err := json.Unmarshal(jsonBuf, &segments)
-	if err != nil {
-		log.Error().Err(err).Msg("Unmarshal")
-		return nil, err
-	}
-	for _, s := range segments {
-		pluginFile, err := a.resolvePluginPath(s.Seg)
-		if err != nil {
-			log.Error().
-				Str("Seg", s.Seg).
-				Err(err).
-				Msg("resolvePluginPath")
-			continue
-		}
-		pluginLib, err := plugin.Open(pluginFile)
-		if err != nil {
-			log.Error().Err(err).Msg("Open")
-			continue
-		}
-		symbol, err := pluginLib.Lookup(SegmentEntrySymbolName)
-		if err != nil {
-			log.Error().Err(err).
-				Str("file", pluginFile).
-				Str("symbol", SegmentEntrySymbolName).
-				Msg("Lookup")
-			continue
-		}
-		newFunc := symbol.(func([]byte) Segment)
-		argsBuf, _ := s.Args.MarshalJSON()
-		segment := newFunc(argsBuf)
-		widgets = append(widgets, &widgetS{
-			segment: segment,
-		})
-	}
-	return widgets, nil
-}
+// func (a *App) buildFromJsonSYMBOLVERSION(jsonBuf []byte) ([]*widgetS, error) {
+// 	widgets := make([]*widgetS, 0)
+// 	type SegmentSpec struct {
+// 		Seg  string
+// 		Args json.RawMessage
+// 	}
+// 	segments := []SegmentSpec{}
+// 	err := json.Unmarshal(jsonBuf, &segments)
+// 	if err != nil {
+// 		log.Error().Err(err).Msg("Unmarshal")
+// 		return nil, err
+// 	}
+// 	for _, s := range segments {
+// 		pluginFile, err := a.resolvePluginPath(s.Seg)
+// 		if err != nil {
+// 			log.Error().
+// 				Str("Seg", s.Seg).
+// 				Err(err).
+// 				Msg("resolvePluginPath")
+// 			continue
+// 		}
+// 		pluginLib, err := plugin.Open(pluginFile)
+// 		if err != nil {
+// 			log.Error().Err(err).Msg("Open")
+// 			continue
+// 		}
+// 		symbol, err := pluginLib.Lookup(SegmentEntrySymbolName)
+// 		if err != nil {
+// 			log.Error().Err(err).
+// 				Str("file", pluginFile).
+// 				Str("symbol", SegmentEntrySymbolName).
+// 				Msg("Lookup")
+// 			continue
+// 		}
+// 		newFunc := symbol.(func([]byte) Segment)
+// 		argsBuf, _ := s.Args.MarshalJSON()
+// 		segment := newFunc(argsBuf)
+// 		widgets = append(widgets, &widgetS{
+// 			segment: segment,
+// 		})
+// 	}
+// 	return widgets, nil
+// }

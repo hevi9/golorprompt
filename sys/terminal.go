@@ -16,29 +16,28 @@ func GetWidth() int {
 	} else if value, exists := os.LookupEnv("COLUMNS"); exists {
 		if width, err := strconv.Atoi(value); err == nil {
 			return width
-		} else {
-			return 80
 		}
-	} else {
-		return 80
 	}
+	return 80
+
 }
 
 // Fg Foreground color
 func Fg(color colorful.Color) string {
 	r, g, b := color.RGB255()
 	return fmt.Sprintf("%s\x1b[38;2;%d;%d;%dm%s",
-		Config.NpcStart, r, g, b, Config.NpcEnd)
+		Config.Shell.npcStart, r, g, b, Config.Shell.npcEnd)
 }
 
 // Bg Background color
 func Bg(color colorful.Color) string {
 	r, g, b := color.RGB255()
 	return fmt.Sprintf("%s\x1b[48;2;%d;%d;%dm%s",
-		Config.NpcStart, r, g, b, Config.NpcEnd)
+		Config.Shell.npcStart, r, g, b, Config.Shell.npcEnd)
 }
 
 // Rz Reset color/style
 func Rz() string {
-	return fmt.Sprintf("%s\x1b[0m%s", Config.NpcStart, Config.NpcEnd)
+	return fmt.Sprintf("%s\x1b[0m%s",
+		Config.Shell.npcStart, Config.Shell.npcEnd)
 }

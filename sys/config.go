@@ -33,12 +33,15 @@ var Config = struct {
 // DefaultConfigJSONBuf Default prompt configuration
 var DefaultConfigJSONBuf = []byte(`
 [
-	{ "seg": "text", "args": {"text": "🔨"} },
+	{ "seg": "text", "args": {"text": "▒◖ ▌ ▟ ￼￼▢"} },
 	{ "seg": "text", "args": {"text": "K", "hue": 180} },
 	{ "seg": "space" },
 	{ "seg": "cwd" },
 	{ "seg": "space" },
-	{ "seg": "disk", "args": {"threshold":55} },
+	{ "seg": "disk", 
+	  "adjust": 1,
+	  "args": {"threshold":55} 
+	},
 	{ "seg": "space" },
 	{ "seg": "envvar", "args": {"envvar":"HOME", "show":"asis", "sign":"@"} },
 	{ "seg": "space" },
@@ -53,7 +56,7 @@ var DefaultConfigJSONBuf = []byte(`
 	{ "seg": "load", "args": {"threshold": 5} },
 	{ "seg": "space" },
 	{ "seg": "mem", 
-	  "adjust": +1,
+	  "adjust": 1,
 	  "args": {
 		  "threshold": 10
 	  } 
@@ -63,8 +66,14 @@ var DefaultConfigJSONBuf = []byte(`
 	{ "seg": "space" },
 	{ "seg": "time" },
 	{ "seg": "space" },
+
+	{ "seg": "newline",
+	  "args": {
+		  "bg": 145050050
+	  }
+	},
 	{ "seg": "user" },
-	{ "seg": "text", "args": {"text": "▶", "hue": 45} },
+	{ "seg": "text", "args": {"text": "⚫", "hue": 45} },
 	{ "seg": "space" }
 ]
 `)

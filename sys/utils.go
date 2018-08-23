@@ -1,6 +1,10 @@
 package sys
 
-import "hash/crc32"
+import (
+	"hash/crc32"
+
+	"github.com/lucasb-eyer/go-colorful"
+)
 
 const (
 	minUint32          uint32 = 0
@@ -25,4 +29,9 @@ func minInt(a, b int) int {
 		return a
 	}
 	return b
+}
+
+// color 045050080 => H=45 S=50 V=80
+func NumColorToHSV(numColor int) colorful.Color {
+	return colorful.Hsv(180, 0.5, 0.5)
 }

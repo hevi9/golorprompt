@@ -63,8 +63,9 @@ func (a *App) NewSegmentByNameJSON(name string, jsonBuf []byte) (Segment, error)
 func (a *App) buildFromJSON(jsonBuf []byte) ([]Widget, error) {
 	widgets := make([]Widget, 0)
 	type SegmentSpec struct {
-		Seg  string
-		Args json.RawMessage
+		Seg    string          // segment identication
+		Adjust int             // width adjust for unregular unicode  runes
+		Args   json.RawMessage // segment specific args
 	}
 	specs := []SegmentSpec{}
 	err := json.Unmarshal(jsonBuf, &specs)
@@ -84,6 +85,7 @@ func (a *App) buildFromJSON(jsonBuf []byte) ([]Widget, error) {
 		}
 		widgets = append(widgets, &segmentWidget{
 			name:    s.Seg,
+			adjust:  s.Adjust,
 			segment: segment,
 		})
 	}

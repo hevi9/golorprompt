@@ -26,6 +26,7 @@ func widgetsLen(widgets []Widget) int {
 type segmentWidget struct {
 	name    string
 	segment Segment
+	adjust  int
 	chunks  []Chunk
 }
 
@@ -38,7 +39,7 @@ func (w *segmentWidget) Len() int {
 	for _, c := range w.chunks {
 		length += c.Len()
 	}
-	return length
+	return length + w.adjust
 }
 
 func (w *segmentWidget) Chunks() []Chunk {

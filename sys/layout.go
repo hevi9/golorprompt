@@ -45,7 +45,7 @@ func makeLayout(widgets []Widget) [][]Widget {
 		w := widgets[currentWidgetIdx]
 		currentLineLen += w.Len()
 		// or newline segment
-		if currentLineLen < GetWidth() {
+		if currentLineLen < GetWidth() && w.Name() != "newline" {
 			line = append(line, w)
 		} else {
 			lines = append(lines, line)
@@ -59,7 +59,7 @@ func makeLayout(widgets []Widget) [][]Widget {
 	lines = append(lines, line)
 
 	// fill lines
-	for i := range lines {
+	for i := 0; i < len(lines)-1; i++ {
 		fillCnt := GetWidth() - widgetsLen(lines[i])
 		lines[i] = append(lines[i], &segmentWidget{
 			chunks: []Chunk{
@@ -68,7 +68,6 @@ func makeLayout(widgets []Widget) [][]Widget {
 				},
 			},
 		})
-
 		log.Debug().Int("line len", widgetsLen(line)).Msg("")
 	}
 

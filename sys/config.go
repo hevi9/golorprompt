@@ -34,7 +34,7 @@ var Config = struct {
 var DefaultConfigJSONBuf = []byte(`
 [
 	{ "seg": "text", "args": {"text": "🔨"} },
-	{ "seg": "text", "args": {"text": "🗎", "hue": 180} },
+	{ "seg": "text", "args": {"text": "K", "hue": 180} },
 	{ "seg": "space" },
 	{ "seg": "cwd" },
 	{ "seg": "space" },
@@ -52,7 +52,12 @@ var DefaultConfigJSONBuf = []byte(`
 	{ "seg": "space" },
 	{ "seg": "load", "args": {"threshold": 5} },
 	{ "seg": "space" },
-	{ "seg": "mem", "args": {"threshold": 10} },	
+	{ "seg": "mem", 
+	  "adjust": +1,
+	  "args": {
+		  "threshold": 10
+	  } 
+	},	
 	{ "seg": "space" },
 	{ "seg": "stub" },
 	{ "seg": "space" },

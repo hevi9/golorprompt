@@ -1,6 +1,10 @@
 package sys
 
-import "github.com/rs/zerolog/log"
+import (
+	"strings"
+
+	"github.com/rs/zerolog/log"
+)
 
 // Return lines of widgets
 func makeLayout(widgets []Widget) [][]Widget {
@@ -55,14 +59,23 @@ func makeLayout(widgets []Widget) [][]Widget {
 	lines = append(lines, line)
 
 	// fill lines
-	for _, line := range lines {
+	for i := range lines {
+		fillCnt := GetWidth() - widgetsLen(lines[i])
+		lines[i] = append(lines[i], &segmentWidget{
+			chunks: []Chunk{
+				Chunk{
+					Text: strings.Repeat("^", maxInt(fillCnt, 1)),
+				},
+			},
+		})
+
 		log.Debug().Int("line len", widgetsLen(line)).Msg("")
 	}
 
-	log.Debug().
-		Int("widgets width", widgetsLen(widgets)).
-		Int("terminal width", GetWidth()).
-		Msg("widths")
+	// log.Debug().
+	// 	Int("widgets width", widgetsLen(widgets)).
+	// 	Int("terminal width", GetWidth()).
+	// 	Msg("widths")
 
 	// debug
 	// for _, w := range widgets {

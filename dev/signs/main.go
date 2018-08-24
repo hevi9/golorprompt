@@ -1,5 +1,9 @@
 package main
 
+import (
+	"fmt"
+)
+
 var stuff = `
 🤝 👊🖓 😔  😃 🤑 😼🙊👧🤦🧕🎅🧘🥓☕ 🍵
 🂾 🎩 💣 🔧 ⚗ ⚖ 🔨 📡 🖫 ✇ 🌍 🌐
@@ -110,6 +114,10 @@ var stuff = `
 🔵
 `
 
-func main() {
+var powerline = "         "
 
+func main() {
+	for _, ch := range powerline {
+		fmt.Printf("%U %c\n", ch, ch)
+	}
 }

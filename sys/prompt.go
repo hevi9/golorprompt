@@ -38,11 +38,19 @@ func CommandPrompt(app *App, jsonBuf []byte) error {
 	buf := bytes.Buffer{}
 	for idx, line := range lines {
 		log.Debug().Int("idx", idx).Msg("line")
-		buf.WriteString(Bg(Config.BgLine))
+		buf.WriteString(Bg(Config.BgLine)) // TODO move out
 		for _, widgetElem := range line {
 			// fmt.Printf("%#v\n", widgetElem)
 			for _, chunk := range widgetElem.Chunks() {
-				buf.WriteString(Fg(chunk.Fg))
+				if chunk.Reset {
+					buf.WriteString(Rz())
+				}
+				if chunk.FgUse {
+					buf.WriteString(Fg(chunk.Fg))
+				}
+				if chunk.BgUse {
+					buf.WriteString(Fg(chunk.Bg))
+				}
 				buf.WriteString(Config.Shell.escapeFunc(chunk.Text))
 			}
 		}

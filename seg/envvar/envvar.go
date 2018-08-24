@@ -67,6 +67,10 @@ func (self *EnvVar) Render(env sys.Environment) []sys.Chunk {
 			})
 	}
 
+	/*
+		sys.Chunk("texti").Fg(color).Bg(color).Rz()
+	*/
+
 	return chunks
 }
 

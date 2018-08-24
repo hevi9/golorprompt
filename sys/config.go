@@ -33,8 +33,7 @@ var Config = struct {
 // DefaultConfigJSONBuf Default prompt configuration
 var DefaultConfigJSONBuf = []byte(`
 [
-	{ "seg": "text", "args": {"text": "▒◖ ▌ ▟ ￼￼▢"} },
-	{ "seg": "text", "args": {"text": "K", "hue": 180} },
+	{ "seg": "text", "args": {"text": ""} },
 	{ "seg": "space" },
 	{ "seg": "cwd" },
 	{ "seg": "space" },
@@ -73,7 +72,7 @@ var DefaultConfigJSONBuf = []byte(`
 	  }
 	},
 	{ "seg": "user" },
-	{ "seg": "text", "args": {"text": "⚫", "hue": 45} },
+	{ "seg": "text", "args": {"text": "", "hue": 45} },
 	{ "seg": "space" }
 ]
 `)

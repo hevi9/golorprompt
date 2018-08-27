@@ -42,15 +42,7 @@ func CommandPrompt(app *App, jsonBuf []byte) error {
 		for _, widgetElem := range line {
 			// fmt.Printf("%#v\n", widgetElem)
 			for _, chunk := range widgetElem.Chunks() {
-				if chunk.Reset {
-					buf.WriteString(Rz())
-				}
-				if chunk.FgUse {
-					buf.WriteString(Fg(chunk.Fg))
-				}
-				if chunk.BgUse {
-					buf.WriteString(Fg(chunk.Bg))
-				}
+				buf.WriteString(Fg(chunk.Fg))
 				buf.WriteString(Config.Shell.escapeFunc(chunk.Text))
 			}
 		}

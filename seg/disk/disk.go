@@ -6,6 +6,7 @@ import (
 	"math"
 
 	"github.com/hevi9/golorprompt/sys"
+	colorful "github.com/lucasb-eyer/go-colorful"
 	"github.com/rs/zerolog/log"
 	"github.com/shirou/gopsutil/disk"
 )
@@ -41,9 +42,9 @@ func (d *Disk) Render(env sys.Environment) []sys.Chunk {
 	}
 	valueScale := 1.0 - math.Min(stat.UsedPercent/100.0, 1.0)
 	return []sys.Chunk{
-		sys.ChunkH(
-			fmt.Sprintf("%2.f%%%s", stat.UsedPercent, sys.Sign.Disk),
-			90.0*valueScale,
-		),
+		sys.Chunk{
+			Text: fmt.Sprintf("%2.f  %s", stat.UsedPercent, sys.Sign.Disk),
+			Fg:   colorful.Hsv(90.0*valueScale, sys.Config.FgSaturation, sys.Config.FgValue),
+		},
 	}
 }

@@ -28,7 +28,7 @@ func (*cwdS) Render(env sys.Environment) []sys.Chunk {
 
 	if cwd, err = os.Getwd(); err != nil {
 		log.Printf("os.Getwd(): %s", err)
-		return []sys.Chunk{{Text: "NOCWD", Fg: sys.Config.FgError, FgUse: true}}
+		return []sys.Chunk{{Text: "NOCWD", Fg: sys.Config.FgError}}
 	}
 
 	parts := strings.Split(cwd, string(os.PathSeparator))
@@ -38,9 +38,8 @@ func (*cwdS) Render(env sys.Environment) []sys.Chunk {
 		if len(parts[i]) > 0 {
 			hue := 330.0*sys.HashToFloat64([]byte(parts[i])) + 15.0
 			chunks = append(chunks, sys.Chunk{
-				Text:  parts[i],
-				Fg:    colorful.Hsv(hue, sys.Config.FgSaturationLow, sys.Config.FgValue),
-				FgUse: true,
+				Text: parts[i],
+				Fg:   colorful.Hsv(hue, sys.Config.FgSaturationLow, sys.Config.FgValue),
 			})
 		}
 		hue := 0.0
@@ -49,7 +48,12 @@ func (*cwdS) Render(env sys.Environment) []sys.Chunk {
 		if err == nil {
 			hue = 90.0
 		}
-		chunks = append(chunks, sys.ChunkH(string(os.PathSeparator), hue))
+		chunks = append(chunks,
+			sys.Chunk{
+				Text: string(os.PathSeparator),
+				Fg:   colorful.Hsv(hue, sys.Config.FgSaturationLow, sys.Config.FgValue),
+			},
+		)
 	}
 	return chunks
 }

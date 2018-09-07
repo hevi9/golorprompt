@@ -14,19 +14,19 @@ import (
 
 	// "load" segments
 	_ "github.com/hevi9/golorprompt/seg/cwd"
-	_ "github.com/hevi9/golorprompt/seg/disk"
-	_ "github.com/hevi9/golorprompt/seg/envvar"
-	_ "github.com/hevi9/golorprompt/seg/exitcode"
-	_ "github.com/hevi9/golorprompt/seg/hostname"
-	_ "github.com/hevi9/golorprompt/seg/ifile"
-	_ "github.com/hevi9/golorprompt/seg/jobs"
-	_ "github.com/hevi9/golorprompt/seg/level"
-	_ "github.com/hevi9/golorprompt/seg/load"
-	_ "github.com/hevi9/golorprompt/seg/mem"
-	_ "github.com/hevi9/golorprompt/seg/stub"
-	_ "github.com/hevi9/golorprompt/seg/text"
-	_ "github.com/hevi9/golorprompt/seg/time"
-	_ "github.com/hevi9/golorprompt/seg/user"
+	// _ "github.com/hevi9/golorprompt/seg/disk"
+	// _ "github.com/hevi9/golorprompt/seg/envvar"
+	// _ "github.com/hevi9/golorprompt/seg/exitcode"
+	// _ "github.com/hevi9/golorprompt/seg/hostname"
+	// _ "github.com/hevi9/golorprompt/seg/ifile"
+	// _ "github.com/hevi9/golorprompt/seg/jobs"
+	// _ "github.com/hevi9/golorprompt/seg/level"
+	// _ "github.com/hevi9/golorprompt/seg/load"
+	// _ "github.com/hevi9/golorprompt/seg/mem"
+	// _ "github.com/hevi9/golorprompt/seg/stub"
+	// _ "github.com/hevi9/golorprompt/seg/text"
+	// _ "github.com/hevi9/golorprompt/seg/time"
+	// _ "github.com/hevi9/golorprompt/seg/user"
 )
 
 var (

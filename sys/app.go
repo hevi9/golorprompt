@@ -46,7 +46,7 @@ func (a *App) resolvePluginPath(name string) (string, error) {
 }
 
 // NewSegmentByNameJSON Create new segment by name with given json data
-func (a *App) NewSegmentByNameJSON(name string, jsonBuf []byte) (Segment, error) {
+func (a *App) NewSegmentByNameJSON(name string, jsonBuf []byte) (*SegmentCommon, error) {
 	info, ok := segmentRegistry[name]
 	if !ok {
 		return nil, fmt.Errorf("%s does not exists", name)
@@ -60,37 +60,72 @@ func (a *App) NewSegmentByNameJSON(name string, jsonBuf []byte) (Segment, error)
 	return segment, nil
 }
 
-func (a *App) buildFromJSON(jsonBuf []byte) ([]Widget, error) {
-	widgets := make([]Widget, 0)
-	type SegmentSpec struct {
-		Seg    string          // segment identication
-		Adjust int             // width adjust for unregular unicode  runes
-		Args   json.RawMessage // segment specific args
-	}
-	specs := []SegmentSpec{}
-	err := json.Unmarshal(jsonBuf, &specs)
+func (a *App) buildFromJSON(jsonBuf []byte) ([]*SegmentCommon, error) {
+	segments := make([]*SegmentCommon, 0)
+
+	segmentMsgs := []json.RawMessage{}
+	err := json.Unmarshal(jsonBuf, &segmentMsgs)
 	if err != nil {
-		log.Error().Err(err).Msg("Unmarshal")
+		log.Error().Err(err).Msg("Unmarshal segment messages")
 		return nil, err
 	}
-	for _, s := range specs {
-		jsonBuf, err := s.Args.MarshalJSON()
+
+	for _, rawMsg := range segmentMsgs {
+		segmentCommon := SegmentCommon{}
+		err := json.Unmarshal(rawMsg, &segmentCommon)
 		if err != nil {
-			panic("IMPOSSIBLE: cannot marshal segment args json")
-		}
-		segment, err := a.NewSegmentByNameJSON(s.Seg, jsonBuf)
-		if err != nil {
-			log.Error().Err(err).Msg("NewSegmentByNameJSON")
+			log.Error().Err(err).Msg("Unmarshall common segment")
 			continue
 		}
-		widgets = append(widgets, &segmentWidget{
-			name:    s.Seg,
-			adjust:  s.Adjust,
-			segment: segment,
-		})
+		segment, err := a.NewSegmentByNameJSON(segmentCommon.Segment, []byte(""))
+		if err != nil {
+			log.Error().Str("segment", segmentCommon.Segment).Err(err).Msg("NewSegmentByNameJSON")
+			continue
+		}
+		err = json.Unmarshal(rawMsg, &segment)
+		if err != nil {
+			log.Error().Err(err).Msg("Unmarshall specific segment")
+			continue
+		}
+
+		fmt.Printf("%#v\n", segment)
+
+		segments = append(segments, segment)
 	}
-	return widgets, nil
+	return segments, nil
 }
+
+// func (a *App) buildFromJSON(jsonBuf []byte) ([]Widget, error) {
+// 	widgets := make([]Widget, 0)
+// 	type SegmentSpec struct {
+// 		Seg    string          // segment identication
+// 		Adjust int             // width adjust for unregular unicode  runes
+// 		Args   json.RawMessage // segment specific args
+// 	}
+// 	specs := []SegmentSpec{}
+// 	err := json.Unmarshal(jsonBuf, &specs)
+// 	if err != nil {
+// 		log.Error().Err(err).Msg("Unmarshal")
+// 		return nil, err
+// 	}
+// 	for _, s := range specs {
+// 		jsonBuf, err := s.Args.MarshalJSON()
+// 		if err != nil {
+// 			panic("IMPOSSIBLE: cannot marshal segment args json")
+// 		}
+// 		segment, err := a.NewSegmentByNameJSON(s.Seg, jsonBuf)
+// 		if err != nil {
+// 			log.Error().Err(err).Msg("NewSegmentByNameJSON")
+// 			continue
+// 		}
+// 		widgets = append(widgets, &segmentWidget{
+// 			name:    s.Seg,
+// 			adjust:  s.Adjust,
+// 			segment: segment,
+// 		})
+// 	}
+// 	return widgets, nil
+// }
 
 // func (a *App) buildFromJsonSYMBOLVERSION(jsonBuf []byte) ([]*widgetS, error) {
 // 	widgets := make([]*widgetS, 0)

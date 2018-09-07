@@ -1,9 +1,7 @@
 package sys
 
 import (
-	"bytes"
 	"fmt"
-	"sync"
 
 	"github.com/rs/zerolog/log"
 )
@@ -14,41 +12,45 @@ func CommandPrompt(app *App, jsonBuf []byte) error {
 	Config.Shell = noneShell
 
 	// build widges from json spec
-	widgets, err := app.buildFromJSON(jsonBuf)
+	segments, err := app.buildFromJSON(jsonBuf)
 	if err != nil {
 		log.Error().Err(err).Msg("Cannot build from json spec")
 		return err
 	}
+	for _, s := range segments {
+		fmt.Printf("%#v", s)
+		fmt.Printf("%s\n", s.Segment)
+	}
 
 	// render widgets concurrently
-	wg := sync.WaitGroup{}
-	for _, widgetElem := range widgets {
-		wg.Add(1)
-		go func(widgetElem Widget) {
-			defer wg.Done()
-			widgetElem.Render(app, 100)
-		}(widgetElem)
-	}
-	wg.Wait()
+	// wg := sync.WaitGroup{}
+	// for _, widgetElem := range widgets {
+	// 	wg.Add(1)
+	// 	go func(widgetElem Widget) {
+	// 		defer wg.Done()
+	// 		widgetElem.Render(app, 100)
+	// 	}(widgetElem)
+	// }
+	// wg.Wait()
 
-	// make layout
-	lines := makeLayout(widgets)
+	// // make layout
+	// lines := makeLayout(widgets)
 
-	// print widgets
-	buf := bytes.Buffer{}
-	for idx, line := range lines {
-		log.Debug().Int("idx", idx).Msg("line")
-		buf.WriteString(Bg(Config.BgLine)) // TODO move out
-		for _, widgetElem := range line {
-			// fmt.Printf("%#v\n", widgetElem)
-			for _, chunk := range widgetElem.Chunks() {
-				buf.WriteString(Fg(chunk.Fg))
-				buf.WriteString(Config.Shell.escapeFunc(chunk.Text))
-			}
-		}
-		buf.WriteString(Rz())
-	}
-	fmt.Printf("%s", buf.String())
+	// // print widgets
+	// buf := bytes.Buffer{}
+	// for idx, line := range lines {
+	// 	log.Debug().Int("idx", idx).Msg("line")
+	// 	buf.WriteString(Bg(Config.BgLine)) // TODO move out
+	// 	for _, widgetElem := range line {
+	// 		// fmt.Printf("%#v\n", widgetElem)
+	// 		for _, chunk := range widgetElem.Chunks() {
+	// 			buf.WriteString(Fg(chunk.Fg))
+	// 			buf.WriteString(Config.Shell.escapeFunc(chunk.Text))
+	// 		}
+	// 	}
+	// 	buf.WriteString(Rz())
+	// }
+	// fmt.Printf("%s", buf.String())
 
 	return nil
 }

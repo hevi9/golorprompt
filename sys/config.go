@@ -33,49 +33,56 @@ var Config = struct {
 // DefaultConfigJSONBuf Default prompt configuration
 var DefaultConfigJSONBuf = []byte(`
 [
-	{ "seg": "text", "args": {"text": ""} },
-	{ "seg": "space" },
-	{ "seg": "cwd" },
-	{ "seg": "space" },
-	{ "seg": "disk", 
-	  "adjust": 1,
-	  "args": {"threshold":55} 
-	},
-	{ "seg": "space" },
-	{ "seg": "envvar", "args": {"envvar":"HOME", "show":"asis", "sign":"@"} },
-	{ "seg": "space" },
-	{ "seg": "exitcode" },
-	{ "seg": "space" },
-	{ "seg": "hostname" },
-	{ "seg": "space" },
-	{ "seg": "ifile", "args": {"filename":"Makefile", "sign":"§", "hue": 0} },
-	{ "seg": "space" },
-	{ "seg": "level" },
-	{ "seg": "space" },
-	{ "seg": "load", "args": {"threshold": 5} },
-	{ "seg": "space" },
-	{ "seg": "mem", 
-	  "adjust": 1,
-	  "args": {
-		  "threshold": 10
-	  } 
-	},	
-	{ "seg": "space" },
-	{ "seg": "stub" },
-	{ "seg": "space" },
-	{ "seg": "time" },
-	{ "seg": "space" },
-
-	{ "seg": "newline",
-	  "args": {
-		  "bg": 145050050
-	  }
-	},
-	{ "seg": "user" },
-	{ "seg": "text", "args": {"text": "", "hue": 45} },
-	{ "seg": "space" }
+	{ "segment": "cwd" }
 ]
 `)
+
+// // DefaultConfigJSONBuf Default prompt configuration
+// var DefaultConfigJSONBuf = []byte(`
+// [
+// 	{ "seg": "text", "args": {"text": ""} },
+// 	{ "seg": "space" },
+// 	{ "seg": "cwd" },
+// 	{ "seg": "space" },
+// 	{ "seg": "disk",
+// 	  "adjust": 1,
+// 	  "args": {"threshold":55}
+// 	},
+// 	{ "seg": "space" },
+// 	{ "seg": "envvar", "args": {"envvar":"HOME", "show":"asis", "sign":"@"} },
+// 	{ "seg": "space" },
+// 	{ "seg": "exitcode" },
+// 	{ "seg": "space" },
+// 	{ "seg": "hostname" },
+// 	{ "seg": "space" },
+// 	{ "seg": "ifile", "args": {"filename":"Makefile", "sign":"§", "hue": 0} },
+// 	{ "seg": "space" },
+// 	{ "seg": "level" },
+// 	{ "seg": "space" },
+// 	{ "seg": "load", "args": {"threshold": 5} },
+// 	{ "seg": "space" },
+// 	{ "seg": "mem",
+// 	  "adjust": 1,
+// 	  "args": {
+// 		  "threshold": 10
+// 	  }
+// 	},
+// 	{ "seg": "space" },
+// 	{ "seg": "stub" },
+// 	{ "seg": "space" },
+// 	{ "seg": "time" },
+// 	{ "seg": "space" },
+
+// 	{ "seg": "newline",
+// 	  "args": {
+// 		  "bg": 145050050
+// 	  }
+// 	},
+// 	{ "seg": "user" },
+// 	{ "seg": "text", "args": {"text": "", "hue": 45} },
+// 	{ "seg": "space" }
+// ]
+// `)
 
 // var defaultJsonV1 = `
 // {

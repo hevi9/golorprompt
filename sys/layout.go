@@ -6,51 +6,51 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-// Return lines of widgets
-func makeLayout(widgets []Widget) [][]Widget {
+// Return lines of slots
+func makeLayout(slots []Slot) [][]Slot {
 
-	// remove nil widgets
-	tmp := make([]Widget, 0)
-	for _, w := range widgets {
-		if w.Chunks() != nil {
-			tmp = append(tmp, w)
+	// remove empty slots
+	tmp := make([]Slot, 0)
+	for _, s := range slots {
+		if s.Chunks() != nil {
+			tmp = append(tmp, s)
 		} else {
-			log.Debug().Str("name", w.Name()).Msg("discard")
+			log.Debug().Str("name", s.Name()).Msg("discard")
 		}
 	}
-	widgets = tmp
+	slots = tmp
 
 	// compress space
-	tmp = make([]Widget, 0)
+	tmp = make([]Slot, 0)
 	prevName := ""
-	for _, w := range widgets {
-		if w.Name() == "space" {
+	for _, s := range slots {
+		if s.Name() == "space" {
 			if prevName != "space" {
-				tmp = append(tmp, w)
+				tmp = append(tmp, s)
 			}
 		} else {
-			tmp = append(tmp, w)
+			tmp = append(tmp, s)
 		}
-		prevName = w.Name()
+		prevName = s.Name()
 	}
-	widgets = tmp
+	slots = tmp
 
 	// split widgets to lines
-	lines := make([][]Widget, 0)
-	line := make([]Widget, 0)
-	hasWidgets := len(widgets)
+	lines := make([][]Slot, 0)
+	line := make([]Slot, 0)
+	hasWidgets := len(slots)
 	currentWidgetIdx := 0
 	currentLineLen := 0
 	for hasWidgets > 0 {
-		w := widgets[currentWidgetIdx]
-		currentLineLen += w.Len()
+		s := slots[currentWidgetIdx]
+		currentLineLen += s.Len()
 		// or newline segment
-		if currentLineLen < GetWidth() && w.Name() != "newline" {
-			line = append(line, w)
+		if currentLineLen < GetWidth() && s.Name() != "newline" {
+			line = append(line, s)
 		} else {
 			lines = append(lines, line)
-			line = make([]Widget, 0)
-			line = append(line, w)
+			line = make([]Slot, 0)
+			line = append(line, s)
 			currentLineLen = 0
 		}
 		currentWidgetIdx++
@@ -60,15 +60,15 @@ func makeLayout(widgets []Widget) [][]Widget {
 
 	// fill lines
 	for i := 0; i < len(lines)-1; i++ {
-		fillCnt := GetWidth() - widgetsLen(lines[i])
-		lines[i] = append(lines[i], &segmentWidget{
+		fillCnt := GetWidth() - slotsLen(lines[i])
+		lines[i] = append(lines[i], &segmentSlot{
 			chunks: []Chunk{
 				Chunk{
 					Text: strings.Repeat("^", maxInt(fillCnt, 1)),
 				},
 			},
 		})
-		log.Debug().Int("line len", widgetsLen(line)).Msg("")
+		log.Debug().Int("line len", slotsLen(line)).Msg("")
 	}
 
 	// log.Debug().

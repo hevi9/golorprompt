@@ -10,15 +10,13 @@ import (
 	"golang.org/x/sys/unix"
 )
 
-type cwdS struct {
-	sys.SegmentCommon
-}
+type cwdS struct{}
 
 func init() {
 	sys.Register(
 		"cwd",
 		"Show current working directory",
-		func(jsonBuf []byte) (*sys.SegmentCommon, error) {
+		func(jsonBuf []byte) (sys.Segment, error) {
 			return &cwdS{}, nil
 		},
 	)

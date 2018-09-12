@@ -46,10 +46,10 @@ func (a *App) resolvePluginPath(name string) (string, error) {
 }
 
 // NewSegmentByNameJSON Create new segment by name with given json data
-func (a *App) NewSegmentByNameJSON(name string, jsonBuf []byte) (*SegmentCommon, error) {
+func (a *App) NewSegmentByNameJSON(name string, jsonBuf []byte) (Segment, error) {
 	info, ok := segmentRegistry[name]
 	if !ok {
-		return nil, fmt.Errorf("%s does not exists", name)
+		return nil, fmt.Errorf("name '%s' does not exists", name)
 	}
 	// load segment plugin on demand, that updates registry
 	segment, err := info.newWithJSONFunc(jsonBuf)
@@ -60,8 +60,8 @@ func (a *App) NewSegmentByNameJSON(name string, jsonBuf []byte) (*SegmentCommon,
 	return segment, nil
 }
 
-func (a *App) buildFromJSON(jsonBuf []byte) ([]*SegmentCommon, error) {
-	segments := make([]*SegmentCommon, 0)
+func (a *App) buildFromJSON(jsonBuf []byte) ([]Slot, error) {
+	slots := make([]Slot, 0)
 
 	segmentMsgs := []json.RawMessage{}
 	err := json.Unmarshal(jsonBuf, &segmentMsgs)
@@ -71,15 +71,16 @@ func (a *App) buildFromJSON(jsonBuf []byte) ([]*SegmentCommon, error) {
 	}
 
 	for _, rawMsg := range segmentMsgs {
-		segmentCommon := SegmentCommon{}
-		err := json.Unmarshal(rawMsg, &segmentCommon)
+		aSegmentSlot := segmentSlot{} // use slot
+		err := json.Unmarshal(rawMsg, &aSegmentSlot)
 		if err != nil {
 			log.Error().Err(err).Msg("Unmarshall common segment")
 			continue
 		}
-		segment, err := a.NewSegmentByNameJSON(segmentCommon.Segment, []byte(""))
+		// decode bg color
+		segment, err := a.NewSegmentByNameJSON(aSegmentSlot.Name(), []byte(""))
 		if err != nil {
-			log.Error().Str("segment", segmentCommon.Segment).Err(err).Msg("NewSegmentByNameJSON")
+			log.Error().Str("segment", aSegmentSlot.Name()).Err(err).Msg("NewSegmentByNameJSON")
 			continue
 		}
 		err = json.Unmarshal(rawMsg, &segment)
@@ -87,12 +88,10 @@ func (a *App) buildFromJSON(jsonBuf []byte) ([]*SegmentCommon, error) {
 			log.Error().Err(err).Msg("Unmarshall specific segment")
 			continue
 		}
-
-		fmt.Printf("%#v\n", segment)
-
-		segments = append(segments, segment)
+		aSegmentSlot.segment = segment
+		slots = append(slots, &aSegmentSlot)
 	}
-	return segments, nil
+	return slots, nil
 }
 
 // func (a *App) buildFromJSON(jsonBuf []byte) ([]Widget, error) {

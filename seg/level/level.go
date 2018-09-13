@@ -15,9 +15,7 @@ func init() {
 	sys.Register(
 		"level",
 		"Show shell level",
-		func(jsonBuf []byte) (sys.Segment, error) {
-			return &Level{}, nil
-		},
+		func() sys.Segment { return &Level{} },
 	)
 }
 

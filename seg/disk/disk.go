@@ -1,7 +1,6 @@
 package disk
 
 import (
-	"encoding/json"
 	"fmt"
 	"math"
 
@@ -19,14 +18,8 @@ func init() {
 	sys.Register(
 		"disk",
 		"Alert for disk capacity",
-		func(jsonBuf []byte) (sys.Segment, error) {
-			segment := &Disk{}
-			err := json.Unmarshal(jsonBuf, segment)
-			if err != nil {
-				return nil, err
-			}
-			log.Debug().Int("threshold", segment.Threshold).Msg("disk args")
-			return segment, nil
+		func() sys.Segment {
+			return &Disk{}
 		},
 	)
 }
@@ -43,7 +36,7 @@ func (d *Disk) Render(env sys.Environment) []sys.Chunk {
 	valueScale := 1.0 - math.Min(stat.UsedPercent/100.0, 1.0)
 	return []sys.Chunk{
 		sys.Chunk{
-			Text: fmt.Sprintf("%2.f  %s", stat.UsedPercent, sys.Sign.Disk),
+			Text: fmt.Sprintf("%2.f%s", stat.UsedPercent, sys.Sign.Disk),
 			Fg:   colorful.Hsv(90.0*valueScale, sys.Config.FgSaturation, sys.Config.FgValue),
 		},
 	}

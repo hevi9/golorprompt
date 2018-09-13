@@ -11,9 +11,8 @@ func init() {
 	sys.Register(
 		"stub",
 		"Stub segment for development",
-		func(jsonBuf []byte) (sys.Segment, error) {
-			segment := &Stub{}
-			return segment, nil
+		func() sys.Segment {
+			return &Stub{}
 		},
 	)
 }

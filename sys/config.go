@@ -41,49 +41,88 @@ var Config = struct {
 // DefaultConfigJSONBuf Default prompt configuration
 var DefaultConfigJSONBuf = []byte(`
 [
-	{ "segment": "text", "args": {"text": ""} },
-	{ "segment": "space" },
+	{ "segment": "text",
+	  "text": "" 
+	},
 	{ "segment": "cwd" },
-	{ "segment": "space" },
 	{ "segment": "disk",
 	  "adjust": 1,
-	  "args": {"threshold":55}
+	  "threshold":10
 	},
-	{ "segment": "space" },
-	{ "segment": "envvar", "args": {"envvar":"HOME", "show":"asis", "sign":"@"} },
-	{ "segment": "space" },
+	{ "segment": "envvar", 
+	  "envvar":"SHELL", 
+	  "show":"asis", 
+	  "sign":"@"
+	},
 	{ "segment": "exitcode" },
-	{ "segment": "space" },
 	{ "segment": "hostname" },
-	{ "segment": "space" },
-	{ "segment": "ifile", "args": {"filename":"Makefile", "sign":"§", "hue": 0} },
-	{ "segment": "space" },
+	{ "segment":  "ifile", 
+	  "filename": "Makefile", 
+	  "sign":"§",  
+	  "hue": 0
+	},
 	{ "segment": "level" },
-	{ "segment": "space" },
-	{ "segment": "load", "args": {"threshold": 5} },
-	{ "segment": "space" },
+	{ "segment": "load", 
+	  "threshold": 1
+	},
 	{ "segment": "mem",
-	  "adjust": 1,
-	  "args": {
-		  "threshold": 10
-	  }
+	  "adjust": 1,	  
+	  "threshold": 10
 	},
-	{ "segment": "space" },
-	{ "segment": "stub" },
-	{ "segment": "space" },
 	{ "segment": "time" },
-	{ "segment": "space" },
-
-	{ "segment": "newline",
-	  "args": {
-		  "bg": 145050050
-	  }
-	},
 	{ "segment": "user" },
-	{ "segment": "text", "args": {"text": "", "hue": 45} },
-	{ "segment": "space" }
+	{ "segment": "text",
+	  "text": "", 
+	  "hue": 45
+	}
 ]
 `)
+
+// var DefaultConfigJSONBuf = []byte(`
+// [
+// 	{ "segment": "text", "args": {"text": ""} },
+// 	{ "segment": "space" },
+// 	{ "segment": "cwd" },
+// 	{ "segment": "space" },
+// 	{ "segment": "disk",
+// 	  "adjust": 1,
+// 	  "args": {"threshold":55}
+// 	},
+// 	{ "segment": "space" },
+// 	{ "segment": "envvar", "args": {"envvar":"HOME", "show":"asis", "sign":"@"} },
+// 	{ "segment": "space" },
+// 	{ "segment": "exitcode" },
+// 	{ "segment": "space" },
+// 	{ "segment": "hostname" },
+// 	{ "segment": "space" },
+// 	{ "segment": "ifile", "args": {"filename":"Makefile", "sign":"§", "hue": 0} },
+// 	{ "segment": "space" },
+// 	{ "segment": "level" },
+// 	{ "segment": "space" },
+// 	{ "segment": "load", "args": {"threshold": 5} },
+// 	{ "segment": "space" },
+// 	{ "segment": "mem",
+// 	  "adjust": 1,
+// 	  "args": {
+// 		  "threshold": 10
+// 	  }
+// 	},
+// 	{ "segment": "space" },
+// 	{ "segment": "stub" },
+// 	{ "segment": "space" },
+// 	{ "segment": "time" },
+// 	{ "segment": "space" },
+
+// 	{ "segment": "newline",
+// 	  "args": {
+// 		  "bg": 145050050
+// 	  }
+// 	},
+// 	{ "segment": "user" },
+// 	{ "segment": "text", "args": {"text": "", "hue": 45} },
+// 	{ "segment": "space" }
+// ]
+// `)
 
 // var defaultJsonV1 = `
 // {

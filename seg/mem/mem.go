@@ -1,7 +1,6 @@
 package mem
 
 import (
-	"encoding/json"
 	"fmt"
 	"math"
 
@@ -19,16 +18,8 @@ func init() {
 	sys.Register(
 		"mem",
 		"Alert high memory usage",
-		func(jsonBuf []byte) (sys.Segment, error) {
-			segment := &Mem{}
-			err := json.Unmarshal(jsonBuf, segment)
-			if err != nil {
-				return nil, err
-			}
-			log.Debug().
-				Int("threshold", segment.Threshold).
-				Msg("mem args")
-			return segment, nil
+		func() sys.Segment {
+			return &Mem{}
 		},
 	)
 }

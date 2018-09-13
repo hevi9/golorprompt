@@ -15,9 +15,8 @@ func init() {
 	sys.Register(
 		"exitcode",
 		"Show and describe exit code",
-		func(jsonBuf []byte) (sys.Segment, error) {
-			segment := &ExitCode{}
-			return segment, nil
+		func() sys.Segment {
+			return &ExitCode{}
 		},
 	)
 }

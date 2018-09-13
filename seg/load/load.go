@@ -1,7 +1,6 @@
 package load
 
 import (
-	"encoding/json"
 	"fmt"
 	"math"
 
@@ -20,16 +19,8 @@ func init() {
 	sys.Register(
 		"load",
 		"Alert high cpu load",
-		func(jsonBuf []byte) (sys.Segment, error) {
-			segment := &Load{}
-			err := json.Unmarshal(jsonBuf, segment)
-			if err != nil {
-				return nil, err
-			}
-			log.Debug().
-				Int("threshold", segment.Threshold).
-				Msg("load args")
-			return segment, nil
+		func() sys.Segment {
+			return &Load{}
 		},
 	)
 }

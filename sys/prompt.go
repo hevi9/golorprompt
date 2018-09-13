@@ -19,10 +19,6 @@ func CommandPrompt(app *App, jsonBuf []byte) error {
 		log.Error().Err(err).Msg("Cannot build from json spec")
 		return err
 	}
-	for _, s := range slots {
-		fmt.Printf("%#v\n", s)
-		// fmt.Printf("%s\n", s.Segment)
-	}
 
 	// render widgets concurrently
 	wg := sync.WaitGroup{}

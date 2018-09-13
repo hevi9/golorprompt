@@ -15,8 +15,8 @@ func init() {
 	sys.Register(
 		"jobs",
 		"Show jobs started from this shell",
-		func(jsonBuf []byte) (sys.Segment, error) {
-			return &Jobs{}, nil
+		func() sys.Segment {
+			return &Jobs{}
 		},
 	)
 }

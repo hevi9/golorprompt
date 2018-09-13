@@ -16,8 +16,8 @@ func init() {
 	sys.Register(
 		"cwd",
 		"Show current working directory",
-		func(jsonBuf []byte) (sys.Segment, error) {
-			return &cwdS{}, nil
+		func() sys.Segment {
+			return &cwdS{}
 		},
 	)
 }

@@ -1,7 +1,6 @@
 package hostname
 
 import (
-	"encoding/json"
 	"os"
 
 	"github.com/hevi9/golorprompt/sys"
@@ -17,18 +16,10 @@ func init() {
 	sys.Register(
 		"hostname",
 		"Show hostname if envvar exists",
-		func(jsonBuf []byte) (sys.Segment, error) {
-			segment := &Hostname{
+		func() sys.Segment {
+			return &Hostname{
 				ShowIfEnv: "SSH_CLIENT",
 			}
-			err := json.Unmarshal(jsonBuf, segment)
-			if err != nil {
-				return nil, err
-			}
-			log.Debug().
-				Str("showifenv", segment.ShowIfEnv).
-				Msg("hostname args")
-			return segment, nil
 		},
 	)
 }

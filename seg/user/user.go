@@ -17,9 +17,8 @@ func init() {
 	sys.Register(
 		"user",
 		"Show user",
-		func(jsonBuf []byte) (sys.Segment, error) {
-			segment := &User{}
-			return segment, nil
+		func() sys.Segment {
+			return &User{}
 		},
 	)
 }

@@ -1,7 +1,6 @@
 package envvar
 
 import (
-	"encoding/json"
 	"os"
 	"path"
 
@@ -20,18 +19,8 @@ func init() {
 	sys.Register(
 		"envvar",
 		"Show environment variable",
-		func(jsonBuf []byte) (sys.Segment, error) {
-			segment := &EnvVar{}
-			err := json.Unmarshal(jsonBuf, segment)
-			if err != nil {
-				return nil, err
-			}
-			log.Debug().
-				Str("envvar", segment.Envvar).
-				Str("show", segment.Show).
-				Str("sign", segment.Sign).
-				Msg("envvar args")
-			return segment, nil
+		func() sys.Segment {
+			return &EnvVar{}
 		},
 	)
 }

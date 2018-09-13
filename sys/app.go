@@ -51,12 +51,8 @@ func (a *App) NewSegmentByNameJSON(name string, jsonBuf []byte) (Segment, error)
 	if !ok {
 		return nil, fmt.Errorf("name '%s' does not exists", name)
 	}
-	// load segment plugin on demand, that updates registry
-	segment, err := info.newWithJSONFunc(jsonBuf)
-	if err != nil {
-		return nil, err
-	}
-	log.Info().Str("seg", info.name).Msg("new segment")
+	segment := info.newSegmentFunc()
+	// log.Info().Str("segment", info.name).Msg("new segment")
 	return segment, nil
 }
 
@@ -88,7 +84,12 @@ func (a *App) buildFromJSON(jsonBuf []byte) ([]Slot, error) {
 			log.Error().Err(err).Msg("Unmarshall specific segment")
 			continue
 		}
+
 		aSegmentSlot.segment = segment
+		log.Info().
+			Str("slot", fmt.Sprintf("%#v", aSegmentSlot)).
+			Str("segment", fmt.Sprintf("%#v", segment)).
+			Msg("new")
 		slots = append(slots, &aSegmentSlot)
 	}
 	return slots, nil

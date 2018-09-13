@@ -1,0 +1,71 @@
+{
+    "space": " ",
+    "prefix": "",
+    "suffix": "",
+    "fgHue": 180,
+    "fgSaturation": 0.5,
+    "fgValue": 0.6,
+    "segments": [
+        {
+            "segment": "text",
+            "text": ""
+        },
+        {
+            "segment": "cwd"
+        },
+        {
+            "segment": "disk",
+            "adjust": 1,
+            "threshold": 10
+        },
+        {
+            "segment": "envvar",
+            "envvar": "SHELL",
+            "show": "asis",
+            "sign": "@"
+        },
+        {
+            "segment": "exitcode"
+        },
+        {
+            "segment": "hostname"
+        },
+        {
+            "segment": "subsegments",
+            "space": "",
+            "prefix": "<",
+            "suffix": ">",
+            "segments": [
+                {
+                    "segment": "ifile",
+                    "filename": "Makefile",
+                    "sign": "M",
+                    "hue": 45
+                }
+            ]
+        },
+        {
+            "segment": "level"
+        },
+        {
+            "segment": "load",
+            "threshold": 1
+        },
+        {
+            "segment": "mem",
+            "adjust": 1,
+            "threshold": 10
+        },
+        {
+            "segment": "time"
+        },
+        {
+            "segment": "user"
+        },
+        {
+            "segment": "text",
+            "text": "",
+            "hue": 45
+        }
+    ]
+}

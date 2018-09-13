@@ -78,7 +78,9 @@ func TestNumColorToHSV(t *testing.T) {
 		args args
 		want colorful.Color
 	}{
-		// TODO: Add test cases.
+		{
+			"test", args{10}, colorful.Hsv(100.0, 0.5, 0.5),
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

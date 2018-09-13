@@ -15,7 +15,7 @@ func makeLayout(slots []Slot) [][]Slot {
 		if s.Chunks() != nil {
 			tmp = append(tmp, s)
 		} else {
-			log.Debug().Str("name", s.Name()).Msg("discard")
+			log.Debug().Str("name", s.Name()).Msg("discard empty segment")
 		}
 	}
 	slots = tmp

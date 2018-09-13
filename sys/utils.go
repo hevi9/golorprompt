@@ -33,5 +33,7 @@ func minInt(a, b int) int {
 
 // color 045050080 => H=45 S=50 V=80
 func NumColorToHSV(numColor int) colorful.Color {
+	// TODO: fg or bg default ?
+
 	return colorful.Hsv(180, 0.5, 0.5)
 }

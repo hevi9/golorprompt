@@ -86,7 +86,7 @@ func (a *App) buildFromJSON(jsonBuf []byte) ([]Slot, error) {
 		}
 
 		aSegmentSlot.segment = segment
-		log.Info().
+		log.Debug().
 			Str("slot", fmt.Sprintf("%#v", aSegmentSlot)).
 			Str("segment", fmt.Sprintf("%#v", segment)).
 			Msg("new")

@@ -12,6 +12,7 @@ type Slot interface {
 	Render(env Environment, maxLen int)
 	Len() int
 	Chunks() []Chunk
+	Slots() []Slot
 }
 
 func slotsLen(slots []Slot) int {
@@ -48,10 +49,11 @@ type segmentSlot struct {
 	baseSlot
 	segment Segment
 	chunks  []Chunk
+	slots   []Slot
 }
 
 func (s *segmentSlot) Render(env Environment, maxLen int) {
-	s.chunks = s.segment.Render(env)
+	// s.chunks = s.segment.Render(env)
 }
 
 func (s *segmentSlot) Len() int {
@@ -66,6 +68,10 @@ func (s *segmentSlot) Len() int {
 
 func (s *segmentSlot) Chunks() []Chunk {
 	return s.chunks
+}
+
+func (s *segmentSlot) Slots() []Slot {
+	return s.slots
 }
 
 //////////////////////////////////////////////////////////////////////////////

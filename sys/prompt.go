@@ -1,17 +1,18 @@
 package sys
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"path"
+	"strings"
 	"sync"
 
-	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
 
 // CommandPrompt Build prompt from given json spec
-func CommandPrompt(app *App, jsonBuf []byte) error {
+func CommandPrompt(jsonBuf []byte) error {
 	// set shell
 	Config.Shell = noneShell
 
@@ -29,7 +30,7 @@ func CommandPrompt(app *App, jsonBuf []byte) error {
 		wg.Add(1)
 		go func(s2 Slot) {
 			defer wg.Done()
-			s2.Render(app, 100)
+			s2.Render()
 		}(s)
 		for _, s1 := range s.Slots() {
 			render(s1)
@@ -60,29 +61,7 @@ func CommandPrompt(app *App, jsonBuf []byte) error {
 	return nil
 }
 
-// App Application instance running shared data and state
-type App struct {
-	errors int
-}
-
-// NewApp Create App instance
-func NewApp() *App {
-	return &App{}
-}
-
-// Errors Nunber of errors encountered. From zerolog hook
-func (a *App) Errors() int {
-	return a.errors
-}
-
-// Run zerolog hook for counting errors
-func (a *App) Run(e *zerolog.Event, l zerolog.Level, msg string) {
-	if l >= zerolog.ErrorLevel {
-		a.errors++
-	}
-}
-
-func (a *App) resolvePluginPath(name string) (string, error) {
+func resolvePluginPath(name string) (string, error) {
 	suffixes := []string{".so", ""}
 	for _, p := range Config.Paths {
 		for _, s := range suffixes {
@@ -96,7 +75,7 @@ func (a *App) resolvePluginPath(name string) (string, error) {
 }
 
 // NewSegmentByNameJSON Create new segment by name with given json data
-func (a *App) NewSegmentByNameJSON(name string, jsonBuf []byte) (Segment, error) {
+func NewSegmentByNameJSON(name string, jsonBuf []byte) (Segment, error) {
 	info, ok := segmentRegistry[name]
 	if !ok {
 		return nil, fmt.Errorf("name '%s' does not exists", name)
@@ -107,15 +86,15 @@ func (a *App) NewSegmentByNameJSON(name string, jsonBuf []byte) (Segment, error)
 }
 
 func buildFromJSON(jsonBuf []byte) (Slot, error) {
-	return &segmentSlot{}, nil
-	// slots := make([]Slot, 0)
 
-	// segmentMsgs := []json.RawMessage{}
-	// err := json.Unmarshal(jsonBuf, &segmentMsgs)
-	// if err != nil {
-	// 	log.Error().Err(err).Msg("Unmarshal segment messages")
-	// 	return nil, err
-	// }
+	root := &segmentSlot{}
+	err := json.Unmarshal(jsonBuf, &root)
+	if err != nil {
+		log.Error().Err(err).Msg("Unmarshal root")
+		return nil, err
+	}
+
+	return root, nil
 
 	// for _, rawMsg := range segmentMsgs {
 	// 	aSegmentSlot := segmentSlot{} // use slot
@@ -145,6 +124,126 @@ func buildFromJSON(jsonBuf []byte) (Slot, error) {
 	// }
 	// return slots, nil
 }
+
+// Return lines of slots
+func makeLayout(slots []Slot) [][]Slot {
+
+	// remove empty slots
+	tmp := make([]Slot, 0)
+	for _, s := range slots {
+		if s.Chunks() != nil {
+			tmp = append(tmp, s)
+		} else {
+			log.Debug().Str("name", s.Name()).Msg("discard empty segment")
+		}
+	}
+	slots = tmp
+
+	// compress space
+	tmp = make([]Slot, 0)
+	prevName := ""
+	for _, s := range slots {
+		if s.Name() == "space" {
+			if prevName != "space" {
+				tmp = append(tmp, s)
+			}
+		} else {
+			tmp = append(tmp, s)
+		}
+		prevName = s.Name()
+	}
+	slots = tmp
+
+	// split widgets to lines
+	lines := make([][]Slot, 0)
+	line := make([]Slot, 0)
+	hasWidgets := len(slots)
+	currentWidgetIdx := 0
+	currentLineLen := 0
+	for hasWidgets > 0 {
+		s := slots[currentWidgetIdx]
+		currentLineLen += s.Len()
+		// or newline segment
+		if currentLineLen < GetWidth() && s.Name() != "newline" {
+			line = append(line, s)
+		} else {
+			lines = append(lines, line)
+			line = make([]Slot, 0)
+			line = append(line, s)
+			currentLineLen = 0
+		}
+		currentWidgetIdx++
+		hasWidgets--
+	}
+	lines = append(lines, line)
+
+	// fill lines
+	for i := 0; i < len(lines)-1; i++ {
+		fillCnt := GetWidth() - slotsLen(lines[i])
+		lines[i] = append(lines[i], &segmentSlot{
+			chunks: []Chunk{
+				Chunk{
+					Text: strings.Repeat("^", maxInt(fillCnt, 1)),
+				},
+			},
+		})
+		log.Debug().Int("line len", slotsLen(line)).Msg("")
+	}
+
+	// log.Debug().
+	// 	Int("widgets width", widgetsLen(widgets)).
+	// 	Int("terminal width", GetWidth()).
+	// 	Msg("widths")
+
+	// debug
+	// for _, w := range widgets {
+	// 	log.Debug().
+	// 		Str("name", w.Name()).
+	// 		Msg("apply segment")
+	// }
+
+	return lines
+}
+
+// import (
+// 	"math"
+// )
+
+// // emptyLen is length of space not used in allocation
+// func allocateOld(widgets []Widget, maxLen int) (emptyLen int) {
+// 	for _, w := range widgets {
+// 		w.Allocate(maxLen)
+// 	}
+// 	lenWidgets := widgetsLen(widgets)
+// 	if lenWidgets > maxLen {
+// 		frac := float64(maxLen) / float64(lenWidgets)
+// 		for _, w := range widgets {
+// 			w.Allocate(int(math.Floor(frac * float64(w.Len()))))
+// 			if widgetsLen(widgets) <= maxLen {
+// 				break
+// 			}
+// 		}
+// 	}
+// 	return maxLen - widgetsLen(widgets)
+// }
+
+// // Simple allocation of widgets/segments, does not shrink/drop widgets
+// func allocateSimple(widgets []Widget, maxLen int) (emptyLen int) {
+// 	prevLen := -1
+// 	for _, widget := range widgets {
+// 		widget.Allocate(maxLen)
+// 		//log.Printf("widget.Len: %d", widget.Len())
+// 		switch w := widget.(type) {
+// 		// If there is no previous widget don't print space
+// 		case *spaceWidget:
+// 			if prevLen == 0 {
+// 				w.Allocate(0)
+// 			}
+// 		}
+// 		prevLen = widget.Len()
+// 	}
+// 	return maxLen - widgetsLen(widgets)
+// }
 
 // func (a *App) buildFromJSON(jsonBuf []byte) ([]Widget, error) {
 // 	widgets := make([]Widget, 0)

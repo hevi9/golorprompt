@@ -43,13 +43,12 @@ var (
 
 func main() {
 	startTime := time.Now()
-	app := sys.NewApp()
 	command := kingpin.MustParse(cli.Parse(os.Args[1:]))
 
 	// setup logging
 	zerolog.TimeFieldFormat = time.StampMilli
 	zerolog.DurationFieldUnit = time.Second
-	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr}).Hook(app)
+	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr}).Hook(sys.Errors)
 	// hook https://github.com/rs/zerolog/blob/master/log_example_test.go
 	if !*debugFlag {
 		zerolog.SetGlobalLevel(zerolog.Disabled)
@@ -65,14 +64,14 @@ func main() {
 	// Run command
 	switch command {
 	case prompt.FullCommand():
-		sys.CommandPrompt(app, jsonBuf)
+		sys.CommandPrompt(jsonBuf)
 	case show.FullCommand():
 		sys.CommandShow()
 	}
 
 	log.Info().
 		Dur("runtime", time.Since(startTime)).
-		Int("errors", app.Errors()).
+		Int("errors", sys.Errors.Count).
 		Msg("done")
 }
 
@@ -81,6 +80,7 @@ func readAndResolveConfigFile(config string) []byte {
 	if filePath == "" || err != nil {
 		return nil
 	}
+	log.Debug().Str("file", filePath).Msg("using config")
 	buf, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		log.Error().Err(err).Str("filePath", filePath).Msg("Cannot read file")

@@ -9,7 +9,7 @@ import (
 type Slot interface {
 	Name() string
 	Bg() colorful.Color
-	Render(env Environment, maxLen int)
+	Render()
 	Len() int
 	Chunks() []Chunk
 	Slots() []Slot
@@ -52,7 +52,7 @@ type segmentSlot struct {
 	slots   []Slot
 }
 
-func (s *segmentSlot) Render(env Environment, maxLen int) {
+func (s *segmentSlot) Render() {
 	// s.chunks = s.segment.Render(env)
 }
 

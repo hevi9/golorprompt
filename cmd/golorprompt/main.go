@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path"
@@ -56,10 +55,7 @@ func main() {
 
 	// Find config
 	// 1.cli flag 2. env var 3. default home loc 4. inbuild default
-	jsonBuf := readAndResolveConfigFile(*config)
-	if jsonBuf == nil {
-		jsonBuf = sys.DefaultConfigJSONBuf
-	}
+	jsonBuf := ConfigFile(*config).Resolve().Read()
 
 	// Run command
 	switch command {
@@ -75,36 +71,56 @@ func main() {
 		Msg("done")
 }
 
-func readAndResolveConfigFile(config string) []byte {
-	filePath, err := resolveConfigFile(config)
-	if filePath == "" || err != nil {
-		return nil
-	}
-	log.Debug().Str("file", filePath).Msg("using config")
-	buf, err := ioutil.ReadFile(filePath)
-	if err != nil {
-		log.Error().Err(err).Str("filePath", filePath).Msg("Cannot read file")
-		return nil
-	}
-	return buf
+/*
+
+jsonBuf = ConfigFile(*config).Resolve().Read()
+
+*/
+
+type configFile struct {
+	filePath string
 }
 
-func resolveConfigFile(config string) (string, error) {
-	if config != "" {
-		return config, nil
+func ConfigFile(config string) *configFile {
+	return &configFile{
+		filePath: config,
+	}
+}
+
+func (c *configFile) Resolve() *configFile {
+	if c.filePath != "" {
+		return c
 	}
 	value, ok := os.LookupEnv("GOLORPROMPT_CONFIG")
 	if ok {
-		return value, nil
+		c.filePath = value
+		return c
 	}
 	value, ok = os.LookupEnv("HOME")
 	if !ok {
 		log.Error().Str("envvar", "HOME").Msg("Cannot get home path from envvar")
-		return "", fmt.Errorf("Cannot get home path from envvar")
+		c.filePath = ""
+		return c
 	}
 	filePath := path.Join(value, ".config", "golorprompt", "prompt.json")
 	if _, err := os.Stat(filePath); os.IsExist(err) {
-		return filePath, nil
+		c.filePath = filePath
+		return c
 	}
-	return "", nil
+	c.filePath = filePath
+	return c
+}
+
+func (c *configFile) Read() []byte {
+	if c.filePath != "" {
+		log.Debug().Str("file", c.filePath).Msg("using config")
+		buf, err := ioutil.ReadFile(c.filePath)
+		if err != nil {
+			log.Error().Err(err).Str("filePath", c.filePath).Msg("Cannot read file")
+		} else {
+			return buf
+		}
+	}
+	log.Debug().Msg("using DEFAULT config")
+	return sys.DefaultConfigJSONBuf
 }

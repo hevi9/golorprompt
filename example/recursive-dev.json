@@ -1,5 +1,6 @@
 {
     "segment": "group",
+<<<<<<< HEAD
     "prefix": "<",
     "suffix": ">",
     "space": " ",
@@ -18,6 +19,23 @@
             "segments": [
                 {
                     "segment": "slot"
+=======
+    "segments": [
+        {
+            "segment": "stub"
+        },
+        {
+            "segment": "stub"
+        },
+        {
+            "segment": "group",
+            "segments": [
+                {
+                    "segment": "stub"
+                },
+                {
+                    "segment": "stub"
+>>>>>>> 42b5acd6fec1250a083168f69dfc386e4468de2d
                 }
             ]
         }

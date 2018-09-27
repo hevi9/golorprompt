@@ -1,2 +1,22 @@
 {
+    "segment": "group",
+    "segments": [
+        {
+            "segment": "stub"
+        },
+        {
+            "segment": "stub"
+        },
+        {
+            "segment": "group",
+            "segments": [
+                {
+                    "segment": "stub"
+                },
+                {
+                    "segment": "stub"
+                }
+            ]
+        }
+    ]
 }

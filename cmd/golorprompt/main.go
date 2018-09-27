@@ -113,10 +113,17 @@ func (c *configFile) Resolve() *configFile {
 
 func (c *configFile) Read() []byte {
 	if c.filePath != "" {
-		log.Debug().Str("file", c.filePath).Msg("using config")
+		log.Info().Str("file", c.filePath).Msg("using config")
 		buf, err := ioutil.ReadFile(c.filePath)
 		if err != nil {
-			log.Error().Err(err).Str("filePath", c.filePath).Msg("Cannot read file")
+			cwd, err := os.Getwd()
+			if err != nil {
+				cwd = "ERR"
+			}
+			log.Error().Err(err).
+				Str("filePath", c.filePath).
+				Str("cwd", cwd).
+				Msg("Cannot read file")
 		} else {
 			return buf
 		}

@@ -87,14 +87,36 @@ func NewSegmentByNameJSON(name string, jsonBuf []byte) (Segment, error) {
 
 func buildFromJSON(jsonBuf []byte) (Slot, error) {
 
-	root := &segmentSlot{}
+	type JsonSlot struct {
+		Segment  string
+		Segments []json.RawMessage
+	}
+
+	var recurse func(rmsg json.RawMessage) (Slot, error)
+	recurse = func(rmsg json.RawMessage) (Slot, error) {
+		jslot := &JsonSlot{}
+		err := json.Unmarshal(rmsg, jslot)
+		if err != nil {
+			log.Error().Err(err).Msg("Unmarshal recursive")
+			return nil, err
+		}
+		slot := segmentSlot{}
+		// log.Printf("%#v", slot)
+		for _, subRawMsg := range jslot.Segments {
+			recurse(subRawMsg)
+		}
+		return slot, nil
+	}
+	root := json.RawMessage{}
 	err := json.Unmarshal(jsonBuf, &root)
 	if err != nil {
 		log.Error().Err(err).Msg("Unmarshal root")
 		return nil, err
 	}
+	recurse(root)
 
-	return root, nil
+	// ..
+	return &segmentSlot{}, nil
 
 	// for _, rawMsg := range segmentMsgs {
 	// 	aSegmentSlot := segmentSlot{} // use slot

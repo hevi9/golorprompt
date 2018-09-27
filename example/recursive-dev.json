@@ -1,2 +1,25 @@
 {
+    "segment": "group",
+    "prefix": "<",
+    "suffix": ">",
+    "space": " ",
+    "segments": [
+        {
+            "segment": "slot"
+        },
+        {
+            "segment": "slot"
+        },
+        {
+            "segment": "group",
+            "prefix": "|",
+            "suffix": "|",
+            "space": "",
+            "segments": [
+                {
+                    "segment": "slot"
+                }
+            ]
+        }
+    ]
 }

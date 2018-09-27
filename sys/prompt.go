@@ -93,6 +93,7 @@ func buildFromJSON(jsonBuf []byte) (Slot, error) {
 		log.Error().Err(err).Msg("Unmarshal root")
 		return nil, err
 	}
+	log.Printf("%#v", root)
 
 	return root, nil
 

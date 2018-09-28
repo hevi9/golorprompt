@@ -1,25 +1,5 @@
 {
     "segment": "group",
-<<<<<<< HEAD
-    "prefix": "<",
-    "suffix": ">",
-    "space": " ",
-    "segments": [
-        {
-            "segment": "slot"
-        },
-        {
-            "segment": "slot"
-        },
-        {
-            "segment": "group",
-            "prefix": "|",
-            "suffix": "|",
-            "space": "",
-            "segments": [
-                {
-                    "segment": "slot"
-=======
     "segments": [
         {
             "segment": "stub"
@@ -35,7 +15,6 @@
                 },
                 {
                     "segment": "stub"
->>>>>>> 42b5acd6fec1250a083168f69dfc386e4468de2d
                 }
             ]
         }

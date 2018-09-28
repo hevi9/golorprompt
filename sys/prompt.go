@@ -100,11 +100,15 @@ func buildFromJSON(jsonBuf []byte) (Slot, error) {
 			log.Error().Err(err).Msg("Unmarshal recursive")
 			return nil, err
 		}
-		slot := segmentSlot{}
-		// log.Printf("%#v", slot)
+		slot := &segmentSlot{}
 		for _, subRawMsg := range jslot.Segments {
-			recurse(subRawMsg)
+			subslot, err := recurse(subRawMsg)
+			if err != nil {
+				return nil, err
+			}
+			slot.slots = append(slot.slots, subslot)
 		}
+		log.Printf("%#v", slot)
 		return slot, nil
 	}
 	root := json.RawMessage{}
@@ -113,11 +117,7 @@ func buildFromJSON(jsonBuf []byte) (Slot, error) {
 		log.Error().Err(err).Msg("Unmarshal root")
 		return nil, err
 	}
-<<<<<<< HEAD
-	log.Printf("%#v", root)
-=======
 	recurse(root)
->>>>>>> 42b5acd6fec1250a083168f69dfc386e4468de2d
 
 	// ..
 	return &segmentSlot{}, nil

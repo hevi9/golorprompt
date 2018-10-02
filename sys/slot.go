@@ -27,11 +27,11 @@ func slotsLen(slots []Slot) int {
 // baseSlot
 
 type baseSlot struct {
-	Mname   string         `json:"segment"`
-	Madjust int            `json:"adjust"`
-	Mbg     colorful.Color `json:"bg"`
-	Mprefix string         `json:"prefix"`
-	Msuffix string         `json:"suffix"`
+	Mname   string
+	Madjust int
+	Mbg     colorful.Color
+	Mprefix string
+	Msuffix string
 }
 
 func (b *baseSlot) Name() string {
@@ -53,7 +53,7 @@ type segmentSlot struct {
 }
 
 func (s *segmentSlot) Render() {
-	// s.chunks = s.segment.Render(env)
+	s.chunks = s.segment.Render(nullEnvironment)
 }
 
 func (s *segmentSlot) Len() int {

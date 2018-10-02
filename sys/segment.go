@@ -1,6 +1,8 @@
 package sys
 
 import (
+	"fmt"
+
 	"github.com/rs/zerolog/log"
 )
 
@@ -8,6 +10,14 @@ import (
 type Environment interface {
 	Errors() int // Errors In program execution
 }
+
+type nullEnvironmentType struct{}
+
+func (*nullEnvironmentType) Errors() int {
+	return 0
+}
+
+var nullEnvironment = &nullEnvironmentType{}
 
 // Segment Segment interaction interface
 type Segment interface {
@@ -38,4 +48,14 @@ func Register(name string, desc string, newFunc NewSegmentFunc) {
 		desc:           desc,
 		newSegmentFunc: newFunc,
 	}
+}
+
+func NewSegment(name string) (Segment, error) {
+	info, ok := segmentRegistry[name]
+	if !ok {
+		return nil, fmt.Errorf("name '%s' does not exists", name)
+	}
+	segment := info.newSegmentFunc()
+	log.Info().Str("segment", info.name).Msg("new segment")
+	return segment, nil
 }

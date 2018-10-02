@@ -1,5 +1,7 @@
 {
     "segment": "group",
+    "prefix": "<",
+    "suffix": ">",
     "segments": [
         {
             "segment": "stub"

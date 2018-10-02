@@ -7,10 +7,13 @@ import (
 // Config golorprompt runtime configuration
 var Config = struct {
 	Shell           shell
-	BgLine          colorful.Color    // Line background color
-	FgSaturation    float64           // Color saturation of the foreground text
-	FgSaturationLow float64           // Low color saturation of the foreground text
-	FgValue         float64           // Color value of the foreground text
+	BgLine          colorful.Color // Line background color
+	FgSaturation    float64        // Color saturation of the foreground text
+	FgSaturationLow float64        // Low color saturation of the foreground text
+	FgValue         float64        // Color value of the foreground text
+	BgHue           float64
+	BgSaturation    float64
+	BgValue         float64
 	FgDefault       colorful.Color    // Default color to use
 	FgWarning       colorful.Color    // Default color to use for notice or warning info
 	FgError         colorful.Color    // Default color for errors
@@ -23,6 +26,9 @@ var Config = struct {
 	FgSaturation:    0.5,
 	FgSaturationLow: 0.2,
 	FgValue:         0.9,
+	BgHue:           0.0,
+	BgSaturation:    0.0,
+	BgValue:         0.35,
 	FgDefault:       colorful.Hsv(0.0, 0.0, 0.9),
 	FgWarning:       colorful.Hsv(45.0, 0.5, 0.9),
 	FgError:         colorful.Hsv(0.0, 0.7, 0.9),

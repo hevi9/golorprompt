@@ -8,6 +8,8 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/lucasb-eyer/go-colorful"
+
 	"github.com/rs/zerolog/log"
 )
 
@@ -74,24 +76,15 @@ func resolvePluginPath(name string) (string, error) {
 	return "", fmt.Errorf("%s not found", name)
 }
 
-// NewSegmentByNameJSON Create new segment by name with given json data
-func NewSegmentByNameJSON(name string, jsonBuf []byte) (Segment, error) {
-	info, ok := segmentRegistry[name]
-	if !ok {
-		return nil, fmt.Errorf("name '%s' does not exists", name)
-	}
-	segment := info.newSegmentFunc()
-	// log.Info().Str("segment", info.name).Msg("new segment")
-	return segment, nil
-}
-
 func buildFromJSON(jsonBuf []byte) (Slot, error) {
-
 	type JsonSlot struct {
 		Segment  string
+		Adjust   int
+		Prefix   string
+		Suffix   string
+		BgHue    float64
 		Segments []json.RawMessage
 	}
-
 	var recurse func(rmsg json.RawMessage) (Slot, error)
 	recurse = func(rmsg json.RawMessage) (Slot, error) {
 		jslot := &JsonSlot{}
@@ -100,7 +93,25 @@ func buildFromJSON(jsonBuf []byte) (Slot, error) {
 			log.Error().Err(err).Msg("Unmarshal recursive")
 			return nil, err
 		}
-		slot := &segmentSlot{}
+		slot := &segmentSlot{
+			baseSlot: baseSlot{
+				Mname:   jslot.Segment,
+				Madjust: jslot.Adjust,
+				Mprefix: jslot.Prefix,
+				Msuffix: jslot.Suffix,
+				Mbg:     colorful.Hsv(jslot.BgHue, Config.BgSaturation, Config.BgValue),
+			},
+		}
+		slot.segment, err = NewSegment(slot.Name())
+		if err != nil {
+			log.Error().Err(err).Msg("cannot create segment")
+			return nil, err
+		}
+		err = json.Unmarshal(rmsg, slot.segment)
+		if err != nil {
+			log.Error().Err(err).Msg("cannot unmarshal segment specific fields")
+			return nil, err
+		}
 		for _, subRawMsg := range jslot.Segments {
 			subslot, err := recurse(subRawMsg)
 			if err != nil {
@@ -117,10 +128,7 @@ func buildFromJSON(jsonBuf []byte) (Slot, error) {
 		log.Error().Err(err).Msg("Unmarshal root")
 		return nil, err
 	}
-	recurse(root)
-
-	// ..
-	return &segmentSlot{}, nil
+	return recurse(root)
 
 	// for _, rawMsg := range segmentMsgs {
 	// 	aSegmentSlot := segmentSlot{} // use slot

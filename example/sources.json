@@ -1,0 +1,17 @@
+{
+    "segment": "group",
+    "segments": [
+        {
+            "segment": "foo",
+            "source": "foosrc",
+            "view": "fooview"
+        },
+        {
+            "source": "envvar",
+            "envvar": "VIRTUAL_ENV",
+            "view": "path",
+            "pathparts": ["base"],
+            "hue": "content"
+        }
+    ]
+}

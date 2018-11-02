@@ -1,3 +1,5 @@
+# TODO: install with prefix=$HOME/.local
+
 packages = \
   github.com/shirou/gopsutil \
   github.com/lucasb-eyer/go-colorful \

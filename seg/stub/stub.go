@@ -23,9 +23,12 @@ func init() {
 }
 
 func (s *Stub) Render(sys.Environment) []sys.Chunk {
-	delay := 100
-	log.Debug().Msg("render")
-	time.Sleep(delay * time.Millisecond)
+	delay := 200 * time.Millisecond
+	log.Debug().
+		Str("Text", s.Text).
+		Int("Size", s.Size).
+		Msg("Stub.Render")
+	time.Sleep(delay)
 	if s.Text != "" {
 		return []sys.Chunk{
 			sys.Chunk{

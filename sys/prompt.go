@@ -27,8 +27,15 @@ func CommandPrompt(jsonBuf []byte) error {
 
 	// render widgets concurrently
 	wg := sync.WaitGroup{}
+	indent := 0
 	var render func(s Slot)
 	render = func(s Slot) {
+		indent++
+		log.Debug().
+			Str("Name", s.Name()).
+			Msg(fmt.Sprintf("%s %s",
+				strings.Repeat("*", indent),
+				"Concurrent Render"))
 		wg.Add(1)
 		go func(s2 Slot) {
 			defer wg.Done()
@@ -37,11 +44,13 @@ func CommandPrompt(jsonBuf []byte) error {
 		for _, s1 := range s.Slots() {
 			render(s1)
 		}
+		indent--
 	}
 	render(rootSlot)
 	wg.Wait()
 
-	// // make layout
+	// make layout
+	// TODO: handle tree
 	// lines := makeLayout(slots)
 
 	// // print widgets

@@ -1,5 +1,5 @@
 packages = \
-  gopkg.in/libgit2/git2go.v26 \
+  gopkg.in/libgit2/git2go.v27 \
   github.com/shirou/gopsutil \
   github.com/lucasb-eyer/go-colorful \
   golang.org/x/sys/unix \
